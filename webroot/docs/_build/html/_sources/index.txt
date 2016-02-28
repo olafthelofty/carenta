@@ -11,7 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-
+   cakebake
+   calendar
+   employee_work_calendar
 
 Indices and tables
 ==================

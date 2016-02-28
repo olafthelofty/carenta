@@ -27,31 +27,7 @@ use Cake\Event\Event;
  */
 class AppController extends Controller
 {
-
-use \Crud\Controller\ControllerTrait;
-  
-  public $components = [
-      // Here we can configure our action maps, finders and all kinds of things
-      'Crud.Crud' => [
-          'actions' => [
-              'index' => 'Crud.Index', // Map any index action to the Crud index action handler
-               'edit' => 'Crud.Edit',
-              'add' => 'Crud.Add',
-               'delete' => 'Crud.Delete',
-               'view' => [
-                  // Configure the options for this action method
-                  'className' => 'Crud.View',
-                  'validateId' => false
-              ]//,
-             // 'admin_index' => 'Crud.index', // We can even hookup prefix methods
-             // 'admin_add' => 'Crud.add',
-              //'admin_edit' => 'Crud.edit',
-             // 'admin_delete' => 'Crud.delete'
-          ]
-      ]
-  ];
- 
-
+    
     /**
      * Initialization hook method.
      *
@@ -78,11 +54,35 @@ use \Crud\Controller\ControllerTrait;
                 'home'
             ]
         ]);
-    }
+        
+         
+    }    
+  
+  public $components = [
+      // Here we can configure our action maps, finders and all kinds of things
+//      'Crud.Crud' => [
+//          'actions' => [
+//               // 'index' => 'Crud.Index', // Map any index action to the Crud index action handler
+//                'edit' => 'Crud.Edit',
+//                'add' => 'Crud.Add',
+//                'delete' => 'Crud.Delete',
+//                'view' => [
+//                  // Configure the options for this action method
+//                  'className' => 'Crud.View',
+//                  'validateId' => false
+//              ]//,
+//             // 'admin_index' => 'Crud.index', // We can even hookup prefix methods
+//             // 'admin_add' => 'Crud.add',
+//              //'admin_edit' => 'Crud.edit',
+//             // 'admin_delete' => 'Crud.delete'
+//          ]
+//      ]
+  ];
     
     public function beforeFilter(Event $event)
     {
         $this->Auth->allow(['display']);
+        //$this->Crud->listener('relatedModels')->relatedModels(true);
     }
 
     /**

@@ -33,9 +33,9 @@ $this->start('tb_actions');
                     <td><?= h($user->modified) ?></td>
                     <td class="actions col-md-3">
                     <div class="btn-group input-group btn-group-justified">
-                    <?= $this->Html->link('', ['action' => 'view', $user->id], ['title' => __('View'), 'class' => 'btn btn-info btn-sm glyphicon glyphicon-eye-open']) ?>
-                    <?= $this->Html->link('', ['action' => 'edit', $user->id], ['title' => __('Edit'), 'class' => 'btn btn-warning btn-sm glyphicon glyphicon-pencil']) ?>
-                    <?= $this->Form->postLink('', ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id), 'title' => __('Delete'), 'class' => 'btn btn-danger btn-sm glyphicon glyphicon-trash']) ?>
+                    <?= $this->Html->link('View', ['action' => 'view', $user->id], ['title' => __('View'), 'class' => 'btn btn-info btn-sm']) ?>
+                    <?= $this->Html->link('Edit', ['action' => 'edit', $user->id], ['title' => __('Edit'), 'class' => 'btn btn-warning btn-sm']) ?>
+                    <?= $this->Form->postLink('Delete', ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id), 'title' => __('Delete'), 'class' => 'btn btn-danger btn-sm']) ?>
                     </div>
                 </td>
             </tr>

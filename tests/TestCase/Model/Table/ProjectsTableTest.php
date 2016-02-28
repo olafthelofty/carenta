@@ -12,6 +12,13 @@ class ProjectsTableTest extends TestCase
 {
 
     /**
+     * Test subject
+     *
+     * @var \App\Model\Table\ProjectsTable
+     */
+    public $Projects;
+
+    /**
      * Fixtures
      *
      * @var array

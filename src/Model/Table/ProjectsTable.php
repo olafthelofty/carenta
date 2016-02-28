@@ -27,7 +27,6 @@ class ProjectsTable extends Table
         $this->table('projects');
         $this->displayField('name');
         $this->primaryKey('id');
-
     }
 
     /**
@@ -57,6 +56,11 @@ class ProjectsTable extends Table
         $validator
             ->requirePresence('updated_at', 'create')
             ->notEmpty('updated_at');
+
+        $validator
+            ->add('dateofbirth', 'valid', ['rule' => 'date'])
+            ->requirePresence('dateofbirth', 'create')
+            ->notEmpty('dateofbirth');
 
         return $validator;
     }

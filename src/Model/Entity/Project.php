@@ -11,6 +11,7 @@ use Cake\ORM\Entity;
  * @property string $slug
  * @property \Cake\I18n\Time $created_at
  * @property \Cake\I18n\Time $updated_at
+ * @property \Cake\I18n\Time $dateofbirth
  */
 class Project extends Entity
 {

@@ -1,5 +1,4 @@
 <?php
-
 // src/Controller/UsersController.php
 
 namespace App\Controller;
