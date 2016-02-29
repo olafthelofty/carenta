@@ -44,8 +44,30 @@ $this->start('tb_actions');
     </table>
 </div>
 
+<!--
 <div id="calendar"></div>
 <div id="eventdata">hi</div>
+-->
+
+
+	<div id='wrap'>
+
+		<div id='external-events'>
+			<h4>Draggable Events</h4>
+			<div class='fc-event'>New Event</div>
+            <div class='fc-event'>Another Event</div>
+			<p>
+				<img src="img/trashcan.png" id="trash" alt="">
+			</p>
+		</div>
+
+		<div id='calendar'></div>
+
+		<div style='clear:both'></div>
+
+		<xspan class="tt">x</xspan>
+
+	</div>
 
 <!--<div class="cal1"><script type="text/template" id="template-calendar"><?php //echo $this->element('Projects/template-calendar'); ?></script></div>-->
 

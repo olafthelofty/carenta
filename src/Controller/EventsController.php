@@ -73,7 +73,7 @@ function eventadd($allday=null,$day=null,$month=null,$year=null,$hour=null,$min=
             $event['Events']['title'] = 'Event description';
             $event['Events']['start'] = $year.'-'.$month.'-'.$day.' '.$hour.':'.$min.':00';
             $event['Events']['end'] = $year.'-'.$month.'-'.$day.' '.$hourPlus.':'.$min.':00';
-            $this->set('event',$event);
+            $this->set('events',$event);
 
             //Do not use a view template.
             //$this->layout="empty";
@@ -85,6 +85,7 @@ function eventadd($allday=null,$day=null,$month=null,$year=null,$hour=null,$min=
             $this->Event->create();
             $this->data['Events']['title'] = Sanitize::paranoid($this->data["Events"]["title"], array('!','\'','?','_','.',' ','-'));
             $this->data['Events']['editable']='1';
+            $this->data['Events']['start'] = $year.'-'.$month.'-'.$day.' '.$hour.':'.$min.':00';
             $this->Event->save($this->data);
             $this->redirect(array('controller' => "events", 'action' => "index"));
         }

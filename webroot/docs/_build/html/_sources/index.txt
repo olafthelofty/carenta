@@ -14,6 +14,7 @@ Contents:
    cakebake
    calendar
    employee_work_calendar
+   git
 
 Indices and tables
 ==================
