@@ -8,12 +8,13 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property string $title
- * @property \Cake\I18n\Time $start
- * @property \Cake\I18n\Time $end
- * @property int $all_day
+ * @property string $startdate
+ * @property string $enddate
+ * @property string $allDay
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  * @property int $resource_id
+ * @property \App\Model\Entity\Resource $resource
  */
 class Event extends Entity
 {

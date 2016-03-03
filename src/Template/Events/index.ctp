@@ -1,4 +1,5 @@
 <?php
+/* @var $this \Cake\View\View */
 $this->extend('../Layout/TwitterBootstrap/dashboard');
 $this->start('tb_actions');
 ?>
@@ -8,45 +9,40 @@ $this->start('tb_actions');
 <?php $this->end(); ?>
 <?php $this->assign('tb_sidebar', '<ul class="nav nav-sidebar">' . $this->fetch('tb_actions') . '</ul>'); ?>
 
-    
-<h2><?php echo __('All Events'); ?></h2>    
-    
-<div class="table-responsive">     
-    <table id="tblindex" class="table table-hover table-bordered table-condensed table-striped">
-        <thead>
-            <tr>
-                    <th><?= $this->Paginator->sort('id'); ?></th>
-                    <th><?= $this->Paginator->sort('title'); ?></th>
-                    <th><?= $this->Paginator->sort('start'); ?></th>
-                    <th><?= $this->Paginator->sort('end'); ?></th>
-                    <th><?= $this->Paginator->sort('all_day'); ?></th>
-                    <th><?= $this->Paginator->sort('created'); ?></th>
-                    <th><?= $this->Paginator->sort('modified'); ?></th>
-                    <th class="actions"><?= __('Actions'); ?></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($events as $event): ?>
-            <tr>
-                    <td><?= $this->Number->format($event->id) ?></td>
-                    <td><?= h($event->title) ?></td>
-                    <td><?= h($event->start) ?></td>
-                    <td><?= h($event->end) ?></td>
-                    <td><?= $this->Number->format($event->all_day) ?></td>
-                    <td><?= h($event->created) ?></td>
-                    <td><?= h($event->modified) ?></td>
-                    <td class="actions col-md-3">
-                    <div class="btn-group input-group btn-group-justified">
-                    <?= $this->Html->link('View', ['action' => 'view', $event->id], ['title' => __('View'), 'class' => 'btn btn-info btn-sm']) ?>
-                    <?= $this->Html->link('Edit', ['action' => 'edit', $event->id], ['title' => __('Edit'), 'class' => 'btn btn-warning btn-sm']) ?>
-                    <?= $this->Form->postLink('Delete', ['action' => 'delete', $event->id], ['confirm' => __('Are you sure you want to delete # {0}?', $event->id), 'title' => __('Delete'), 'class' => 'btn btn-danger btn-sm']) ?>
-                    </div>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-</div>
+<table class="table table-striped" cellpadding="0" cellspacing="0">
+    <thead>
+        <tr>
+            <th><?= $this->Paginator->sort('id'); ?></th>
+            <th><?= $this->Paginator->sort('title'); ?></th>
+            <th><?= $this->Paginator->sort('startdate'); ?></th>
+            <th><?= $this->Paginator->sort('enddate'); ?></th>
+            <th><?= $this->Paginator->sort('allDay'); ?></th>
+            <th><?= $this->Paginator->sort('Resource'); ?></th>
+            <th><?= $this->Paginator->sort('created'); ?></th>
+            <th><?= $this->Paginator->sort('modified'); ?></th>
+            <th class="actions"><?= __('Actions'); ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($events as $event): ?>
+        <tr>
+            <td><?= $this->Number->format($event->id) ?></td>
+            <td><?= h($event->title) ?></td>
+            <td><?= h($event->startdate) ?></td>
+            <td><?= h($event->enddate) ?></td>
+            <td><?= h($event->allDay) ?></td>
+            <td><?= $event->has('resource') ? $this->Html->link($event->resource->title, ['controller' => 'Resources', 'action' => 'view', $event->resource->id]) : '' ?></td>
+            <td><?= h($event->created) ?></td>
+            <td><?= h($event->modified) ?></td>
+            <td class="actions">
+                <?= $this->Html->link('', ['action' => 'view', $event->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>
+                <?= $this->Html->link('', ['action' => 'edit', $event->id], ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']) ?>
+                <?= $this->Form->postLink('', ['action' => 'delete', $event->id], ['confirm' => __('Are you sure you want to delete # {0}?', $event->id), 'title' => __('Delete'), 'class' => 'btn btn-default glyphicon glyphicon-trash']) ?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
 <div class="paginator">
     <ul class="pagination">
         <?= $this->Paginator->prev('< ' . __('previous')) ?>

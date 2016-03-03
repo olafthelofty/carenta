@@ -23,10 +23,24 @@ class ResourcesController extends AppController
                 }else{
                     $parentId = null;
                 }
-   
+                
+                // format resource headings
+                $durationHrs = ($resource['duration'] / 60 / 60);
+                
+                if($resource['duration'] != 0) {
+                    if($resource['duration'] == 3600) {
+                        $title = $resource['title'] . ' ('. $durationHrs . ' hr)';
+                    }
+                    if($resource['duration'] != 3600) {
+                        $title = $resource['title'] . ' ('. $durationHrs . ' hrs)';
+                    }
+                }else{
+                    $title = $resource['title'];    
+                }      
+
                 $data[] = array(
                         'id' => $resource['id'],
-                        'title'=> $resource['title'],
+                        'title'=> $title,
                         'parentId' => $parentId
 
                 );

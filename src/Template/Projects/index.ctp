@@ -6,7 +6,9 @@ $this->start('tb_actions');
 <?php $this->end(); ?>
 <?php $this->assign('tb_sidebar', '<ul class="nav nav-sidebar">' . $this->fetch('tb_actions') . '</ul>'); ?>
 
-    
+   
+<div id='later'></div>
+
 <h2><?php echo __('All Projects'); ?></h2> 
     
 <div class="table-responsive">     
@@ -66,7 +68,7 @@ $this->start('tb_actions');
 		<div style='clear:both'></div>
 
 		<xspan class="tt">x</xspan>
-
+        
 	</div>
 
 <!--<div class="cal1"><script type="text/template" id="template-calendar"><?php //echo $this->element('Projects/template-calendar'); ?></script></div>-->

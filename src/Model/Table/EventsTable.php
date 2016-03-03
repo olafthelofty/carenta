@@ -53,17 +53,16 @@ class EventsTable extends Table
             ->notEmpty('title');
 
         $validator
-            ->add('start', 'valid', ['rule' => 'datetime'])
-            ->allowEmpty('start');
+            ->requirePresence('startdate', 'create')
+            ->notEmpty('startdate');
 
         $validator
-            ->add('end', 'valid', ['rule' => 'datetime'])
-            ->allowEmpty('end');
+            ->requirePresence('enddate', 'create')
+            ->notEmpty('enddate');
 
         $validator
-            ->add('all_day', 'valid', ['rule' => 'numeric'])
-            ->requirePresence('all_day', 'create')
-            ->notEmpty('all_day');
+            ->requirePresence('allDay', 'create')
+            ->notEmpty('allDay');
 
         return $validator;
     }

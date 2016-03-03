@@ -1,5 +1,6 @@
 <?php
 $this->extend('../Layout/TwitterBootstrap/dashboard');
+
 $this->start('tb_actions');
 ?>
     <li><?=
@@ -13,37 +14,36 @@ $this->start('tb_actions');
     <li><?= $this->Html->link(__('List Events'), ['action' => 'index']) ?></li>
     <li><?= $this->Html->link(__('List Resources'), ['controller' => 'Resources', 'action' => 'index']) ?> </li>
     <li><?= $this->Html->link(__('New Resource'), ['controller' => 'Resources', 'action' => 'add']) ?> </li>
-<?php $this->end(); ?>
-<?php $this->assign('tb_sidebar', '<ul class="nav nav-sidebar">' . $this->fetch('tb_actions') . '</ul>'); ?>
+<?php
+$this->end();
+
+$this->start('tb_sidebar');
+?>
+<ul class="nav nav-sidebar">
+    <li><?=
+    $this->Form->postLink(
+        __('Delete'),
+        ['action' => 'delete', $event->id],
+        ['confirm' => __('Are you sure you want to delete # {0}?', $event->id)]
+    )
+    ?>
+    </li>
+    <li><?= $this->Html->link(__('List Events'), ['action' => 'index']) ?></li>
+    <li><?= $this->Html->link(__('List Resources'), ['controller' => 'Resources', 'action' => 'index']) ?> </li>
+    <li><?= $this->Html->link(__('New Resource'), ['controller' => 'Resources', 'action' => 'add']) ?> </li>
+</ul>
+<?php
+$this->end();
+?>
 <?= $this->Form->create($event); ?>
 <fieldset>
     <legend><?= __('Edit {0}', ['Event']) ?></legend>
     <?php
-           // echo $this->Form->input('title');
-            //echo "";
-            
-            echo $this->Form->input('title');
-           // echo $this->Form->input('start');
-            //echo "";
-            echo $this->Form->input('start', ['type' => 'text', 'class' => 'datepicker']); 
-            
-           // echo $this->Form->input('end');
-            //echo "";
-            echo $this->Form->input('end', ['type' => 'text', 'class' => 'datepicker']); 
-            
-           // echo $this->Form->input('all_day');
-            //echo "";
-            
-            echo $this->Form->input('all_day');
-           // echo $this->Form->input('created');
-            //echo "";
-            echo $this->Form->input('created', ['type' => 'text', 'class' => 'datepicker']); 
-            
-           // echo $this->Form->input('modified');
-            //echo "";
-            echo $this->Form->input('modified', ['type' => 'text', 'class' => 'datepicker']); 
-            
-            echo $this->Form->input('resource_id', ['options' => $resources]);
+    echo $this->Form->input('title');
+    echo $this->Form->input('startdate');
+    echo $this->Form->input('enddate');
+    echo $this->Form->input('allDay');
+    echo $this->Form->input('resource_id', ['options' => $resources]);
     ?>
 </fieldset>
 <?= $this->Form->button(__("Save")); ?>
