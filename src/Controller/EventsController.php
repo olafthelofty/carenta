@@ -11,32 +11,31 @@ use App\Controller\AppController;
 class EventsController extends AppController
 {
  
-    // sets up a feed for calendar events, consumed as json
-    public function feed($id=null) {
-            $vars = $this->params['url'];
-            //$conditions = array('conditions' => array('UNIX_TIMESTAMP(start) >=' => $vars['start'], 'UNIX_TIMESTAMP(start) <=' => $vars['end']));
-            $events = $this->Events->find('all');//, $conditions);
-            foreach($events as $event) {
-                if($event['all_day'] == 1) {
-                    $allday = true;
-                    $end = $event['start'];
-                } else {
-                    $allday = false;
-                    $end = $event['end'];
-                }
-                $data[] = array(
-                        'id' => $event['id'],
-                        'title'=> $event['title'],
-                        'start'=> $event['start'],
-                        'end' => $end,
-                        'resourceId' => $event['resource_id']
-
-                );
-            }
-
-            $this->set(['events' => $data, '_serialize' => 'events']);
-
-    } 
+//    // sets up a feed for calendar events, consumed as json
+//    public function feed() {
+//        
+//            //$vars = $this->params['url'];
+//            //$conditions = array('conditions' => array('UNIX_TIMESTAMP(start) >=' => $vars['start'], 'UNIX_TIMESTAMP(start) <=' => $vars['end']));
+//            $events = $this->Events->find('all');//, $conditions);
+//            foreach($events as $event) {
+//                
+////                if(!$resource['parentID'] == 0) {
+////                    $parentId = $resource['parentID'];
+////                }else{
+////                    $parentId = null;
+////                }     
+//
+//                $data[] = array(
+//                        'id' => $event['id'],
+//                        'employee_id'=> $event['employee_id'],
+//                        'day_of_week' => $event['day_of_week']
+//
+//                );
+//            }
+//
+//            $this->set(['events' => $data, '_serialize' => 'events']);
+//
+//    } 
     
 function eventadd($allday=null,$day=null,$month=null,$year=null,$hour=null,$min=null) {
         if (empty($this->data)) {
@@ -89,6 +88,10 @@ function eventadd($allday=null,$day=null,$month=null,$year=null,$hour=null,$min=
             $this->Event->save($this->data);
             $this->redirect(array('controller' => "events", 'action' => "index"));
         }
+    
+    //echo json_encode($this->data);
+    
+    
     }
 
    

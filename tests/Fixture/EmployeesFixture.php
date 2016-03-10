@@ -38,6 +38,7 @@ class EmployeesFixture extends TestFixture
         'nationality_id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'ethnicity_id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
         'exit_destination_id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'autoIncrement' => null],
+        'current' => ['type' => 'boolean', 'length' => null, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
         'created' => ['type' => 'datetime', 'length' => null, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
         'modified' => ['type' => 'datetime', 'length' => null, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null],
         '_constraints' => [
@@ -60,8 +61,8 @@ class EmployeesFixture extends TestFixture
             'id' => 1,
             'first_name' => 'Lorem ipsum dolor sit amet',
             'last_name' => 'Lorem ipsum dolor sit amet',
-            'start_date' => '2016-02-04',
-            'finish_date' => '2016-02-04',
+            'start_date' => '2016-03-06',
+            'finish_date' => '2016-03-06',
             'telephone' => 'Lorem ipsum dolor sit amet',
             'mobile' => 'Lorem ipsum dolor sit amet',
             'email' => 'Lorem ipsum dolor sit amet',
@@ -70,7 +71,7 @@ class EmployeesFixture extends TestFixture
             'town' => 'Lorem ipsum dolor sit amet',
             'county_id' => 1,
             'postcode' => 'Lorem ipsum dolor sit amet',
-            'date_of_birth' => '2016-02-04',
+            'date_of_birth' => '2016-03-06',
             'ni_number' => 'Lorem ipsum dolor sit amet',
             'timesheet_user' => 1,
             'exit_reason_id' => 1,
@@ -78,8 +79,9 @@ class EmployeesFixture extends TestFixture
             'nationality_id' => 1,
             'ethnicity_id' => 1,
             'exit_destination_id' => 1,
-            'created' => '2016-02-04 14:11:39',
-            'modified' => '2016-02-04 14:11:39'
+            'current' => 1,
+            'created' => '2016-03-06 06:48:58',
+            'modified' => '2016-03-06 06:48:58'
         ],
     ];
 }

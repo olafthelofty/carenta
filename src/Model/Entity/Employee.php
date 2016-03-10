@@ -33,11 +33,13 @@ use Cake\ORM\Entity;
  * @property \App\Model\Entity\Ethnicity $ethnicity
  * @property int $exit_destination_id
  * @property \App\Model\Entity\ExitDestination $exit_destination
+ * @property bool $current
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */
 class Employee extends Entity
 {
+    
     protected function _getFullName()
     {
         return $this->_properties['first_name'] . '  ' .

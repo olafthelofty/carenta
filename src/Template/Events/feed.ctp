@@ -1,11 +1,5 @@
-<?php foreach ($data as $event): ?>
+<?php foreach ($jim as $event): ?>
     <tr>
-        <td><?= $this->Number->format($event->id) ?></td>
-        <td><?= h($event->title) ?></td>
-        <td><?= h($event->start) ?></td>
-        <td><?= h($event->end) ?></td>
-        <td><?= $this->Number->format($event->all_day) ?></td>
-        <td><?= h($event->created) ?></td>
-        <td><?= h($event->modified) ?></td>
+        <td><?php echo $event['startdate'] ?>dd</td>
     </tr>
 <?php endforeach; ?>

@@ -8,6 +8,7 @@ $this->start('tb_actions');
 
    
 <div id='later'></div>
+<div id='events1'></div>
 
 <h2><?php echo __('All Projects'); ?></h2> 
     

@@ -4,17 +4,23 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * Resource Entity.
+ * Pattern Entity.
  *
  * @property int $id
- * @property string $title
- * @property int $parentID
- * @property int $duration
+ * @property int $employee_id
+ * @property \App\Model\Entity\Employee $employee
+ * @property int $day_of_week
+ * @property int $week_of_year
+ * @property int $starting_on
  * @property \Cake\I18n\Time $start_time
  * @property \Cake\I18n\Time $end_time
- * @property \App\Model\Entity\Event[] $events
+ * @property \Cake\I18n\Time $start_date
+ * @property int $repeat_after
+ * @property \Cake\I18n\Time $created
+ * @property \Cake\I18n\Time $modified
+ * @property bool $night_shift
  */
-class Resource extends Entity
+class Pattern extends Entity
 {
 
     /**

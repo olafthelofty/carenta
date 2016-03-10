@@ -16,6 +16,7 @@ use Cake\Validation\Validator;
  * @property \Cake\ORM\Association\BelongsTo $Nationalities
  * @property \Cake\ORM\Association\BelongsTo $Ethnicities
  * @property \Cake\ORM\Association\BelongsTo $ExitDestinations
+ * @property \Cake\ORM\Association\HasMany $Patterns
  */
 class EmployeesTable extends Table
 {
@@ -31,7 +32,7 @@ class EmployeesTable extends Table
         parent::initialize($config);
 
         $this->table('employees');
-        $this->displayField('id');
+        $this->displayField('full_name');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
@@ -60,6 +61,9 @@ class EmployeesTable extends Table
             'foreignKey' => 'exit_destination_id',
             'joinType' => 'INNER'
         ]);
+        $this->hasMany('Patterns', [
+            'foreignKey' => 'employee_id'
+        ]);
     }
 
     /**
@@ -87,10 +91,10 @@ class EmployeesTable extends Table
             ->requirePresence('start_date', 'create')
             ->notEmpty('start_date');
 
-//        $validator
-//            ->add('finish_date', 'valid', ['rule' => 'date'])
-//            ->requirePresence('finish_date', 'create')
-//            ->notEmpty('finish_date');
+        $validator
+            ->add('finish_date', 'valid', ['rule' => 'date'])
+            ->requirePresence('finish_date', 'create')
+            ->notEmpty('finish_date');
 
         $validator
             ->requirePresence('telephone', 'create')
@@ -134,6 +138,11 @@ class EmployeesTable extends Table
             ->add('timesheet_user', 'valid', ['rule' => 'boolean'])
             ->requirePresence('timesheet_user', 'create')
             ->notEmpty('timesheet_user');
+
+        $validator
+            ->add('current', 'valid', ['rule' => 'boolean'])
+            ->requirePresence('current', 'create')
+            ->notEmpty('current');
 
         return $validator;
     }

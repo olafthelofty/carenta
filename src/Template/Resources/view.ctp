@@ -1,5 +1,7 @@
 <?php
 $this->extend('../Layout/TwitterBootstrap/dashboard');
+
+
 $this->start('tb_actions');
 ?>
 <li><?= $this->Html->link(__('Edit Resource'), ['action' => 'edit', $resource->id]) ?> </li>
@@ -8,13 +10,26 @@ $this->start('tb_actions');
 <li><?= $this->Html->link(__('New Resource'), ['action' => 'add']) ?> </li>
 <li><?= $this->Html->link(__('List Events'), ['controller' => 'Events', 'action' => 'index']) ?> </li>
 <li><?= $this->Html->link(__('New Event'), ['controller' => 'Events', 'action' => 'add']) ?> </li>
-<?php $this->end(); ?>
-<?php $this->assign('tb_sidebar', '<ul class="nav nav-sidebar">' . $this->fetch('tb_actions') . '</ul>'); ?>
+<?php
+$this->end();
 
+$this->start('tb_sidebar');
+?>
+<ul class="nav nav-sidebar">
+<li><?= $this->Html->link(__('Edit Resource'), ['action' => 'edit', $resource->id]) ?> </li>
+<li><?= $this->Form->postLink(__('Delete Resource'), ['action' => 'delete', $resource->id], ['confirm' => __('Are you sure you want to delete # {0}?', $resource->id)]) ?> </li>
+<li><?= $this->Html->link(__('List Resources'), ['action' => 'index']) ?> </li>
+<li><?= $this->Html->link(__('New Resource'), ['action' => 'add']) ?> </li>
+<li><?= $this->Html->link(__('List Events'), ['controller' => 'Events', 'action' => 'index']) ?> </li>
+<li><?= $this->Html->link(__('New Event'), ['controller' => 'Events', 'action' => 'add']) ?> </li>
+</ul>
+<?php
+$this->end();
+?>
 <div class="panel panel-default">
     <!-- Panel header -->
     <div class="panel-heading">
-        <h2 class="panel-title"><?php echo __('Viewing Resource '); ?><?= h($resource->title) ?></h2>
+        <h3 class="panel-title"><?= h($resource->title) ?></h3>
     </div>
     <table class="table table-striped" cellpadding="0" cellspacing="0">
         <tr>
@@ -28,6 +43,18 @@ $this->start('tb_actions');
         <tr>
             <td><?= __('ParentID') ?></td>
             <td><?= $this->Number->format($resource->parentID) ?></td>
+        </tr>
+        <tr>
+            <td><?= __('Duration') ?></td>
+            <td><?= $this->Number->format($resource->duration) ?></td>
+        </tr>
+        <tr>
+            <td><?= __('Start Time') ?></td>
+            <td><?= h($resource->start_time) ?></td>
+        </tr>
+        <tr>
+            <td><?= __('End Time') ?></td>
+            <td><?= h($resource->end_time) ?></td>
         </tr>
     </table>
 </div>
@@ -43,9 +70,9 @@ $this->start('tb_actions');
             <tr>
                 <th><?= __('Id') ?></th>
                 <th><?= __('Title') ?></th>
-                <th><?= __('Start') ?></th>
-                <th><?= __('End') ?></th>
-                <th><?= __('All Day') ?></th>
+                <th><?= __('Startdate') ?></th>
+                <th><?= __('Enddate') ?></th>
+                <th><?= __('AllDay') ?></th>
                 <th><?= __('Created') ?></th>
                 <th><?= __('Modified') ?></th>
                 <th><?= __('Resource Id') ?></th>
@@ -57,9 +84,9 @@ $this->start('tb_actions');
                 <tr>
                     <td><?= h($events->id) ?></td>
                     <td><?= h($events->title) ?></td>
-                    <td><?= h($events->start) ?></td>
-                    <td><?= h($events->end) ?></td>
-                    <td><?= h($events->all_day) ?></td>
+                    <td><?= h($events->startdate) ?></td>
+                    <td><?= h($events->enddate) ?></td>
+                    <td><?= h($events->allDay) ?></td>
                     <td><?= h($events->created) ?></td>
                     <td><?= h($events->modified) ?></td>
                     <td><?= h($events->resource_id) ?></td>

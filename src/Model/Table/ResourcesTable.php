@@ -54,6 +54,21 @@ class ResourcesTable extends Table
             ->add('parentID', 'valid', ['rule' => 'numeric'])
             ->allowEmpty('parentID');
 
+        $validator
+            ->add('duration', 'valid', ['rule' => 'numeric'])
+            ->requirePresence('duration', 'create')
+            ->notEmpty('duration');
+
+        $validator
+            ->add('start_time', 'valid', ['rule' => 'time'])
+            ->requirePresence('start_time', 'create')
+            ->notEmpty('start_time');
+
+        $validator
+            ->add('end_time', 'valid', ['rule' => 'time'])
+            ->requirePresence('end_time', 'create')
+            ->notEmpty('end_time');
+
         return $validator;
     }
 }

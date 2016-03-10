@@ -2,7 +2,6 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-use Cake\Datasource\ConnectionManager;
 
 /**
  * Employees Controller
@@ -38,16 +37,11 @@ class EmployeesController extends AppController
     public function view($id = null)
     {
         $employee = $this->Employees->get($id, [
-            'contain' => ['Counties', 'ExitReasons', 'Roles', 'Nationalities', 'Ethnicities', 'ExitDestinations']
+            'contain' => ['Counties', 'ExitReasons', 'Roles', 'Nationalities', 'Ethnicities', 'ExitDestinations', 'Patterns']
         ]);
 
         $this->set('employee', $employee);
         $this->set('_serialize', ['employee']);
-        
-        $age = date_diff(date_create($employee['date_of_birth']), date_create('now'))->y;
-        
-        $this->set('age', $age);
-       
     }
 
     /**
@@ -57,19 +51,6 @@ class EmployeesController extends AppController
      */
     public function add()
     {
-        
-        // use alternative DB connection to inject employee name into calendar->location table in calendar_
-        $conn = ConnectionManager::get('calendar');
-        
-        $results = $conn->execute('SELECT * FROM calendar_locations');
-        $this->set('results', $results);
-        if($this->request->is('post')){
-            $conn->insert('calendar_locations', [
-                'name' => $this->request->data['first_name'] . ' ' . $this->request->data['last_name']
-            ]);
-        }
-        
-        // revert to default DB connection
         $employee = $this->Employees->newEntity();
         if ($this->request->is('post')) {
             $employee = $this->Employees->patchEntity($employee, $this->request->data);
@@ -99,18 +80,6 @@ class EmployeesController extends AppController
      */
     public function edit($id = null)
     {
-        
-        // use alternative DB connection to inject employee name into calendar->location table in calendar_
-        $conn = ConnectionManager::get('calendar');
-        
-        $results = $conn->execute('SELECT * FROM calendar_locations');
-        $this->set('results', $results);
-        if($this->request->is(['patch', 'post', 'put'])){
-            $conn->insert('calendar_locations', [
-                'name' => $this->request->data['first_name'] . ' ' . $this->request->data['last_name']
-            ]);
-        }
-      
         $employee = $this->Employees->get($id, [
             'contain' => []
         ]);
