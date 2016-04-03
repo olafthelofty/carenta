@@ -12,13 +12,12 @@ use Cake\ORM\Entity;
  * @property int $day_of_week
  * @property int $week_of_year
  * @property int $starting_on
- * @property \Cake\I18n\Time $start_time
- * @property \Cake\I18n\Time $end_time
  * @property \Cake\I18n\Time $start_date
  * @property int $repeat_after
+ * @property bool $night_shift
+ * @property int $resource_id
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
- * @property bool $night_shift
  */
 class Pattern extends Entity
 {

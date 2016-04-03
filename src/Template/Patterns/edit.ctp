@@ -14,6 +14,8 @@ $this->start('tb_actions');
     <li><?= $this->Html->link(__('List Patterns'), ['action' => 'index']) ?></li>
     <li><?= $this->Html->link(__('List Employees'), ['controller' => 'Employees', 'action' => 'index']) ?> </li>
     <li><?= $this->Html->link(__('New Employee'), ['controller' => 'Employees', 'action' => 'add']) ?> </li>
+    <li><?= $this->Html->link(__('List Resources'), ['controller' => 'Resources', 'action' => 'index']) ?> </li>
+    <li><?= $this->Html->link(__('New Resource'), ['controller' => 'Resources', 'action' => 'add']) ?> </li>
 <?php
 $this->end();
 
@@ -31,6 +33,8 @@ $this->start('tb_sidebar');
     <li><?= $this->Html->link(__('List Patterns'), ['action' => 'index']) ?></li>
     <li><?= $this->Html->link(__('List Employees'), ['controller' => 'Employees', 'action' => 'index']) ?> </li>
     <li><?= $this->Html->link(__('New Employee'), ['controller' => 'Employees', 'action' => 'add']) ?> </li>
+    <li><?= $this->Html->link(__('List Resources'), ['controller' => 'Resources', 'action' => 'index']) ?> </li>
+    <li><?= $this->Html->link(__('New Resource'), ['controller' => 'Resources', 'action' => 'add']) ?> </li>
 </ul>
 <?php
 $this->end();
@@ -83,10 +87,10 @@ $this->end();
             'empty' => '',
             'label' => 'Start on:'));
         
-    echo $this->Form->label('Pattern.start_time', 'Start Time');
-    echo $this->Form->time('start_time', ['interval' => 15]);
-    echo $this->Form->label('Pattern.end_time', 'End Time');
-    echo $this->Form->time('end_time', ['interval' => 15]);
+//    echo $this->Form->label('Pattern.start_time', 'Start Time');
+//    echo $this->Form->time('start_time', ['interval' => 15]);
+//    echo $this->Form->label('Pattern.end_time', 'End Time');
+//    echo $this->Form->time('end_time', ['interval' => 15]);
         
     echo $this->Form->input('repeat_after', array(
         'options' => array(
@@ -104,6 +108,7 @@ $this->end();
         
     echo $this->Form->input('start_date');
     echo $this->Form->input('night_shift');
+    echo $this->Form->input('resource_id', ['options' => $resources]);        
     ?>
 </fieldset>
 <?= $this->Form->button(__("Save Changes")); ?>

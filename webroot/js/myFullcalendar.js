@@ -2,6 +2,34 @@
 var calendars = {};
 
 $(document).ready(function(){
+
+    var tooltip = $('<div/>').qtip({
+		id: 'calendar',
+		prerender: true,
+		content: {
+			text: ' ',
+			title: {
+				button: false
+			}
+		},
+		position: {
+			my: 'bottom center',
+			at: 'top center',
+			target: 'mouse',
+			viewport: $('#calendar'),
+			adjust: {
+				mouse: false,
+				scroll: false
+			}
+		},
+    show: 'click',
+    hide: {
+        event: false,
+        inactive: 1000
+    },
+		//style: 'qtip-light'
+        style: 'qtip-dark'
+	}).qtip('api');
     
 //$("#eventdata").hide();
 //    
@@ -10,17 +38,18 @@ $(document).ready(function(){
     // see http://www.jqueryajaxphp.com/fullcalendar-crud-with-jquery-and-php/
     
     var zone = "00:00";  //Change this to your timezone
+    var empID = $('#patternApply').attr('data-id');
 
 	$.ajax({
-		url: '../php/process.php',
+		url: '../../php/process.php',
         type: 'POST', // Send post data
-        data: 'type=fetch',
+        data: 'type=fetch&employeeID='+empID,     
+        
         async: false,
         success: function(s){
         	json_events = s;
         }
 	});
-
 
 	var currentMousePos = {
 	    x: -1,
@@ -58,13 +87,16 @@ $(document).ready(function(){
 		$('#calendar').fullCalendar({
             
             schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-            resourceAreaWidth: 230,
+            resourceAreaWidth: 160,
             defaultDate: moment(),
             allDayDefault: false,
             aspectRatio: 2.5,
             scrollTime: '00:00',   
             
 			events: JSON.parse(json_events),
+            eventRender: function(event, element) { 
+                element.find('.fc-title').append("<br/>" + event.resourcesTitle); 
+            }, 
 			//events: [{"id":"14","title":"New Event","start":"2015-01-24T16:00:00+04:00","allDay":false}],
 			//utc: true,
             local: true,
@@ -73,38 +105,48 @@ $(document).ready(function(){
             header: {
                 left: 'today prev,next',
                 center: 'title',
-                right: 'timelineDay,timelineThreeDays,agendaWeek,month'
+                right: 'timelineDay,timelineThreeDays,agendaFourWeeks,month,timelineMnth'
             },
-            
-//			header: {
-//				left: 'prev,next today',
-//				center: 'title',
-//				right: 'month,agendaWeek,agendaDay'
-//			},
             
             defaultView: 'timelineDay',
             views: {
                 timelineThreeDays: {
                     type: 'timeline',
                     duration: { days: 3 }
+                },
+                timelineMnth: {
+                    type: 'timelineMonth',
+                    duration: { days: 7 },
+                    buttonText: '1 week',
+                    allDay: 'Non working',
+                },
+                 agendaFourWeeks: {
+                    type: 'month',
+                    duration: { weeks: 4 },
+                    buttonText: '4 Weeks',
+                    fixedWeekCount : false,
+                    allDayText: 'Non working'
                 }
             },
-            resourceLabelText: 'Rooms',
+            resourceLabelText: 'Shift',
             
             resources: {
-                url: 'http://carenta.somervillehouse.co.uk/resources/feed'
+                url: 'http://carenta.somervillehouse.co.uk/resources/feed'//,
+                //eventBackgroundColor: 
             },
             
 			editable: true,
 			droppable: true, 
-			slotDuration: '00:30:00',
+			slotDuration: '00:15:00',
 			eventReceive: function(event){
 				var title = event.title;
 				var start = event.start.format("YYYY-MM-DD[T]HH:mm:SS");
+                var end = event.end.format("YYYY-MM-DD[T]HH:mm:SS");
+
                 //var start = moment(event.start).format("DD-MM-YYYY HH:mm:ss");
 				$.ajax({
-		    		url: '../php/process.php',
-		    		data: 'type=new&title='+title+'&startdate='+start+'&zone='+zone,
+		    		url: '../../php/process.php',
+		    		data: 'type=new&title='+title+'&startdate='+start+'&enddate='+end+'&zone='+zone,
 		    		type: 'POST',
 		    		dataType: 'json',
 		    		success: function(response){
@@ -123,8 +165,9 @@ $(document).ready(function(){
 		        var title = event.title;
 		        var start = event.start.format();
 		        var end = (event.end == null) ? start : event.end.format();
+
 		        $.ajax({
-					url: '../php/process.php',
+					url: '../../php/process.php',
 					data: 'type=resetdate&title='+title+'&start='+start+'&end='+end+'&eventid='+event.id,
 					type: 'POST',
 					dataType: 'json',
@@ -138,35 +181,41 @@ $(document).ready(function(){
 					}
 				});
 		    },
-		    eventClick: function(event, jsEvent, view) {
-		    	console.log(event.id);
-		          var title = prompt('Event Title:', event.title, { buttons: { Ok: true, Cancel: false} });
-		          if (title){
-		              event.title = title;
-		              console.log('type=changetitle&title='+title+'&eventid='+event.id);
-		              $.ajax({
-				    		url: '../php/process.php',
-				    		data: 'type=changetitle&title='+title+'&eventid='+event.id,
-				    		type: 'POST',
-				    		dataType: 'json',
-				    		success: function(response){	
-				    			if(response.status == 'success')			    			
-		              				$('#calendar').fullCalendar('updateEvent',event);
-				    		},
-				    		error: function(e){
-				    			alert('Error processing your request: '+e.responseText);
-				    		}
-				    	});
-		          }
-			},
+            eventMouseover: function(event, jsEvent, view) {
+                //var end = (event.end == null) ? event.start.format() : event.end.format();
+                var content = '<h3>'+event.title+'</h3>' + 
+                    '<p><b>Start:</b> '+event.start.format()+'<br />' + 
+                    '<p><b>End:</b> '+event.end.format()+'</p>';
+
+                tooltip.set({
+                    'content.text': content
+                })
+                .reposition(jsEvent).show(jsEvent);
+            },
+		    // eventClick: function(event, jsEvent, view) {
+            //     var end = (event.end == null) ? event.start.format() : event.end.format();
+            //     var content = '<h3>'+event.title+'</h3>' + 
+            //         '<p><b>Start:</b> '+event.start.format()+'<br />' + 
+            //         '<p><b>End:</b> '+end+'</p>';
+
+            //     tooltip.set({
+            //         'content.text': content
+            //     })
+            //     .reposition(jsEvent).show(jsEvent);
+            // },
+            dayClick: function() { tooltip.hide() },
+            eventResizeStart: function() { tooltip.hide() },
+            eventDragStart: function() { tooltip.hide() },
+            viewDisplay: function() { tooltip.hide() },
 			eventResize: function(event, delta, revertFunc) {
 				console.log(event);
 				var title = event.title;
 				//var end = event.end.format();
                 var end = (event.end == null) ? start : event.end.format();
 				var start = event.start.format();
+  
                 $.ajax({
-				    		url: '../php/process.php',
+				    		url: '../../php/process.php',
 				    		data: 'type=resetdate&title='+title+'&start='+start+'&end='+end+'&eventid='+event.id,
 				    		type: 'POST',
 				    		dataType: 'json',
@@ -185,7 +234,7 @@ $(document).ready(function(){
 			    	var con = confirm('Are you sure to delete this event permanently?');
 			    	if(con == true) {
 						$.ajax({
-				    		url: '../php/process.php',
+				    		url: '../../php/process.php',
 				    		data: 'type=remove&eventid='+event.id,
 				    		type: 'POST',
 				    		dataType: 'json',
@@ -207,7 +256,7 @@ $(document).ready(function(){
 
 	function getFreshEvents(){
 		$.ajax({
-			url: '../php/process.php',
+			url: '../../php/process.php',
 	        type: 'POST', // Send post data
 	        data: 'type=fetch',
 	        async: false,
@@ -215,6 +264,7 @@ $(document).ready(function(){
 	        	freshevents = s;
 	        }
 		});
+        $('#calendar').fullCalendar('removeEvents');
 		$('#calendar').fullCalendar('addEventSource', JSON.parse(freshevents));
 	}
 

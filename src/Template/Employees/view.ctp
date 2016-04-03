@@ -1,68 +1,42 @@
 <?php
+
+//use Cake\Routing\Router;
+
 $this->extend('../Layout/TwitterBootstrap/dashboard');
 
+?>
 
-$this->start('tb_actions');
-?>
-<li><?= $this->Html->link(__('Edit Employee'), ['action' => 'edit', $employee->id]) ?> </li>
-<li><?= $this->Form->postLink(__('Delete Employee'), ['action' => 'delete', $employee->id], ['confirm' => __('Are you sure you want to delete # {0}?', $employee->id)]) ?> </li>
-<li><?= $this->Html->link(__('List Employees'), ['action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Employee'), ['action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Counties'), ['controller' => 'Counties', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New County'), ['controller' => 'Counties', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Exit Reasons'), ['controller' => 'ExitReasons', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Exit Reason'), ['controller' => 'ExitReasons', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Roles'), ['controller' => 'Roles', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Role'), ['controller' => 'Roles', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Nationalities'), ['controller' => 'Nationalities', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Nationality'), ['controller' => 'Nationalities', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Ethnicities'), ['controller' => 'Ethnicities', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Ethnicity'), ['controller' => 'Ethnicities', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Exit Destinations'), ['controller' => 'ExitDestinations', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Exit Destination'), ['controller' => 'ExitDestinations', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Patterns'), ['controller' => 'Patterns', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Pattern'), ['controller' => 'Patterns', 'action' => 'add']) ?> </li>
-<?php
-$this->end();
+<?php foreach ($employees as $employee): ?>
 
-$this->start('tb_sidebar');
-?>
-<ul class="nav nav-sidebar">
-<li><?= $this->Html->link(__('Edit Employee'), ['action' => 'edit', $employee->id]) ?> </li>
-<li><?= $this->Form->postLink(__('Delete Employee'), ['action' => 'delete', $employee->id], ['confirm' => __('Are you sure you want to delete # {0}?', $employee->id)]) ?> </li>
-<li><?= $this->Html->link(__('List Employees'), ['action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Employee'), ['action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Counties'), ['controller' => 'Counties', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New County'), ['controller' => 'Counties', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Exit Reasons'), ['controller' => 'ExitReasons', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Exit Reason'), ['controller' => 'ExitReasons', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Roles'), ['controller' => 'Roles', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Role'), ['controller' => 'Roles', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Nationalities'), ['controller' => 'Nationalities', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Nationality'), ['controller' => 'Nationalities', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Ethnicities'), ['controller' => 'Ethnicities', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Ethnicity'), ['controller' => 'Ethnicities', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Exit Destinations'), ['controller' => 'ExitDestinations', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Exit Destination'), ['controller' => 'ExitDestinations', 'action' => 'add']) ?> </li>
-<li><?= $this->Html->link(__('List Patterns'), ['controller' => 'Patterns', 'action' => 'index']) ?> </li>
-<li><?= $this->Html->link(__('New Pattern'), ['controller' => 'Patterns', 'action' => 'add']) ?> </li>
-</ul>
-<?php
-$this->end();
-?>
+<div class="row">
+    <div class="col-sm-3">
 <div class="panel panel-default">
     <!-- Panel header -->
     <div class="panel-heading">
-        <h3 class="panel-title"><?= h($employee->full_name) ?></h3>
+       
+        <div class="text-center">  
+         <div class="paginator">
+            <ul class="pagination">
+                <?= $this->Paginator->prev('< ' . __('previous')) ?>
+        
+                <?= $this->Paginator->next(__('next') . ' >') ?>
+            </ul>
+        </div>
+            </div>
+        
+       
     </div>
-    <table class="table table-striped" cellpadding="0" cellspacing="0">
+    
+     <div class="table-responsive">
+         
+        <table class="table table-striped" cellpadding="0" cellspacing="0">
         <tr>
-            <td><?= __('First Name') ?></td>
-            <td><?= h($employee->first_name) ?></td>
+            <td><?= __('Name') ?></td>
+            <td><?= h($employee->full_name) ?></td>
         </tr>
         <tr>
-            <td><?= __('Last Name') ?></td>
-            <td><?= h($employee->last_name) ?></td>
+            <td><?= __('ID') ?></td>
+            <td><?= h($employee->id) ?></td>
         </tr>
         <tr>
             <td><?= __('Telephone') ?></td>
@@ -114,7 +88,7 @@ $this->end();
         </tr>
         <tr>
             <td><?= __('Ethnicity') ?></td>
-            <td><?= $employee->has('ethnicity') ? $this->Html->link($employee->ethnicity->name, ['controller' => 'Ethnicities', 'action' => 'view', $employee->ethnicity->id]) : '' ?></td>
+            <td><?= $employee->has('ethnicity') ? $this->Html->link($this->Text->truncate($employee->ethnicity->name, 32, ['ellipsis' => '...', 'exact' => false]), ['controller' => 'Ethnicities', 'action' => 'view', $employee->ethnicity->id]) : '' ?></td>
         </tr>
         <tr>
             <td><?= __('Exit Destination') ?></td>
@@ -126,7 +100,7 @@ $this->end();
         </tr>
         <tr>
             <td><?= __('Start Date') ?></td>
-            <td><?= h($employee->start_date) ?></td>
+            <td><?= h(date('d M Y',strtotime($employee->start_date))) ?></td>
         </tr>
         <tr>
             <td><?= __('Finish Date') ?></td>
@@ -134,15 +108,15 @@ $this->end();
         </tr>
         <tr>
             <td><?= __('Date Of Birth') ?></td>
-            <td><?= h($employee->date_of_birth) ?></td>
+            <td><?= h(date('d M Y',strtotime($employee->date_of_birth))) ?></td>
         </tr>
         <tr>
             <td><?= __('Created') ?></td>
-            <td><?= h($employee->created) ?></td>
+            <td><?= h(date('d M Y',strtotime($employee->created))) ?></td>
         </tr>
         <tr>
             <td><?= __('Modified') ?></td>
-            <td><?= h($employee->modified) ?></td>
+            <td><?= h(date('d M Y',strtotime($employee->modified))) ?></td>
         </tr>
         <tr>
             <td><?= __('Timesheet User') ?></td>
@@ -153,51 +127,128 @@ $this->end();
             <td><?= $employee->current ? __('Yes') : __('No'); ?></td>
         </tr>
     </table>
+    </div>    
+    
 </div>
+ </div>       
+        <div class="col-sm-9">
+           
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        
+                        <button type="button" class="btn btn-success btn-sm" id="patternRefresh">Refresh Calendar</button>                                    
+                        
+                    </div>
+                    <div class="panel-body">
+                        <div id='calendar'></div>
+                    </div>
+                </div>
 
-<div class="panel panel-default">
-    <!-- Panel header -->
-    <div class="panel-heading">
-        <h3 class="panel-title"><?= __('Related Patterns') ?></h3>
-    </div>
-    <?php if (!empty($employee->patterns)): ?>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th><?= __('Id') ?></th>
-                <th><?= __('Day Of Week', 'Day of Week') ?></th>
-                <th><?= __('Week Of Year', 'Repeat Every') ?></th>
-                <th><?= __('Starting On') ?></th>
-                <th><?= __('Start Time') ?></th>
-                <th><?= __('End Time') ?></th>
-                <th><?= __('Start Date') ?></th>
-                <th><?= __('Repeat After') ?></th>
-                <th><?= __('Night Shift') ?></th>
-                <th class="actions"><?= __('Actions') ?></th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php foreach ($employee->patterns as $patterns): ?>
-                <tr>
-                    <td><?= h($patterns->id) ?></td>
-                    <td><?php echo date('l', strtotime("Sunday +{$patterns->day_of_week} days")); ?></td>
-                    <td><?= h($patterns->week_of_year) ?></td>
-                    <td><?= h($patterns->starting_on) ?></td>
-                    <td><?= h($patterns->start_time->format('H:i')) ?></td>
-                    <td><?= h($patterns->end_time->format('H:i')) ?></td>
-                    <td><?= h($patterns->start_date) ?></td>
-                    <td><?= h($patterns->repeat_after) ?></td>
-                    <td><?= h($patterns->night_shift ? 'Yes' : 'No') ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link('', ['controller' => 'Patterns', 'action' => 'view', $patterns->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>
-                        <?= $this->Html->link('', ['controller' => 'Patterns', 'action' => 'edit', $patterns->id], ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']) ?>
-                        <?= $this->Form->postLink('', ['controller' => 'Patterns', 'action' => 'delete', $patterns->id], ['confirm' => __('Are you sure you want to delete # {0}?', $patterns->id), 'title' => __('Delete'), 'class' => 'btn btn-default glyphicon glyphicon-trash']) ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p class="panel-body">no related Patterns</p>
-    <?php endif; ?>
-</div>
+                <div class="panel panel-default">
+                    <!-- Panel header -->
+                    
+                    <div class="panel-heading text-right">
+                      <div class="nav"><!-- clears floated buttons -->
+
+                        <div class="btn-group pull-left" data-toggle="buttons">
+                            <h3 class="panel-title"><?php echo 'Shift Pattern for ' . $employee->full_name; ?></h3>
+                        </div>
+
+                            <button type="button" class="btn btn-success btn-sm" id="testStuff">Test</button>
+                            <button type="button" data-id=<?php echo $employee->id; ?> class="btn btn-success btn-sm" id="patternApply">Apply Shift Template</button>
+
+                            <?php
+
+                                if (!empty($employee->patterns)){
+
+                                    echo $this->Html->link('Delete Shift Template',
+                                    array('controller' => 'Patterns', 'action' => 'deleteWeekTemplate', 'employee_id' => $employee->id),
+                                    array('class' => 'btn btn-danger btn-sm active')
+                                    ); 
+                                }else{
+                                    echo $this->Html->link('New Shift Template',
+                                    array('controller' => 'Patterns', 'action' => 'addWeekTemplate', 'employee_id' => $employee->id),
+                                    array('class' => 'btn btn-success btn-sm active')
+                                    );
+                                }
+                            ?> 
+                        
+
+                      </div>
+                    </div>
+
+                    <?php if (!empty($employee->patterns)): ?>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                
+                                <th><?= __('Day of Week') ?></th>
+                                <th><?= __('Repeat Every') ?></th>
+                                <th><?= __('Starting On') ?></th>
+                                <th><?= __('Start Date') ?></th>
+                                <th><?= __('Repeat After') ?></th>
+                                <th><?= __('Night Shift') ?></th>
+                                <th class="actions"><?= __('Actions') ?></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($employee->patterns as $patterns): ?>
+                                <tr>
+                                    
+                                    <td><?php echo date('l', strtotime("Saturday +{$patterns->day_of_week} days")); ?></td>
+                                    <td><?= h($patterns->week_of_year) ?></td>
+                                    <td><?= h($patterns->starting_on) ?></td>
+                                    <td><?= h($patterns->start_date ? date('d M Y',strtotime($patterns->start_date)) : 'not set') ?></td>
+                                    <td><?= h($patterns->repeat_after) ?></td>
+                                    <td><?= h($patterns->night_shift ? 'Yes' : 'No') ?></td>
+                                    <td class="actions">
+                                        
+                                    <!-- 
+                                        <?= 
+                                            $this->Html->link('', [
+                                                'controller' => 'Patterns', 
+                                                'action' => 'view', 
+                                                $patterns->id], [
+                                                    'title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open'
+                                                ]
+                                            ) 
+                                        ?>     
+                                    -->
+                                        
+                                        <?= $this->Html->link('', [
+                                            'controller' => 'Patterns', 
+                                            'action' => 'edit', 
+                                            $patterns->id,
+                                            //get current url including page number to pass to controller
+                                            'url' => $this->Paginator->generateUrl(),
+                                            'employee_id' => $employee->id], [
+                                                'title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']
+                                            ) 
+                                        ?>
+                                        <!--                                        
+                                        <?= 
+                                            $this->Form->postLink('', [
+                                                'controller' => 'Patterns', 
+                                                'action' => 'delete', 
+                                                $patterns->id], [
+                                                    'confirm' => __('Are you sure you want to delete # {0}?', 
+                                                    $patterns->id), 
+                                                    'title' => __('Delete'), 
+                                                    'class' => 'btn btn-default glyphicon glyphicon-trash'
+                                                ]
+                                            ) 
+                                        ?>
+                                        -->
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php else: ?>
+                        <p class="panel-body">no related Patterns</p>
+                    <?php endif; ?>
+                </div> 
+            </div>
+        </div>
+            
+        <?php endforeach; ?>

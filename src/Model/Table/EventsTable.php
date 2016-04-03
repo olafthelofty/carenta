@@ -34,6 +34,9 @@ class EventsTable extends Table
         $this->belongsTo('Resources', [
             'foreignKey' => 'resource_id'
         ]);
+        $this->belongsTo('Patterns', [
+            'foreignKey' => 'pattern_id'
+        ]);        
     }
 
     /**

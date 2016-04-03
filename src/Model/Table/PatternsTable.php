@@ -11,9 +11,15 @@ use Cake\Validation\Validator;
  * Patterns Model
  *
  * @property \Cake\ORM\Association\BelongsTo $Employees
+ * @property \Cake\ORM\Association\BelongsTo $Resources
  */
 class PatternsTable extends Table
 {
+    
+    public function findAll(Query $query, array $options)
+{
+    return $query->order(['Patterns.day_of_week' => 'ASC']);
+}
 
     /**
      * Initialize method
@@ -35,6 +41,14 @@ class PatternsTable extends Table
             'foreignKey' => 'employee_id',
             'joinType' => 'INNER'
         ]);
+        $this->belongsTo('Resources', [
+            'foreignKey' => 'resource_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany('Events', [
+            'foreignKey' => 'pattern_id',
+            'dependent' => true
+        ]);        
     }
 
     /**
@@ -65,16 +79,6 @@ class PatternsTable extends Table
             ->notEmpty('starting_on');
 
         $validator
-            ->add('start_time', 'valid', ['rule' => 'time'])
-            ->requirePresence('start_time', 'create')
-            ->notEmpty('start_time');
-
-        $validator
-            ->add('end_time', 'valid', ['rule' => 'time'])
-            ->requirePresence('end_time', 'create')
-            ->notEmpty('end_time');
-
-        $validator
             ->add('start_date', 'valid', ['rule' => 'date'])
             ->allowEmpty('start_date');
 
@@ -100,6 +104,7 @@ class PatternsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['employee_id'], 'Employees'));
+        $rules->add($rules->existsIn(['resource_id'], 'Resources'));
         return $rules;
     }
 }

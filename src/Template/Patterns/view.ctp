@@ -10,6 +10,8 @@ $this->start('tb_actions');
 <li><?= $this->Html->link(__('New Pattern'), ['action' => 'add']) ?> </li>
 <li><?= $this->Html->link(__('List Employees'), ['controller' => 'Employees', 'action' => 'index']) ?> </li>
 <li><?= $this->Html->link(__('New Employee'), ['controller' => 'Employees', 'action' => 'add']) ?> </li>
+<li><?= $this->Html->link(__('List Resources'), ['controller' => 'Resources', 'action' => 'index']) ?> </li>
+<li><?= $this->Html->link(__('New Resource'), ['controller' => 'Resources', 'action' => 'add']) ?> </li>
 <?php
 $this->end();
 
@@ -22,6 +24,8 @@ $this->start('tb_sidebar');
 <li><?= $this->Html->link(__('New Pattern'), ['action' => 'add']) ?> </li>
 <li><?= $this->Html->link(__('List Employees'), ['controller' => 'Employees', 'action' => 'index']) ?> </li>
 <li><?= $this->Html->link(__('New Employee'), ['controller' => 'Employees', 'action' => 'add']) ?> </li>
+<li><?= $this->Html->link(__('List Resources'), ['controller' => 'Resources', 'action' => 'index']) ?> </li>
+<li><?= $this->Html->link(__('New Resource'), ['controller' => 'Resources', 'action' => 'add']) ?> </li>
 </ul>
 <?php
 $this->end();
@@ -29,7 +33,7 @@ $this->end();
 <div class="panel panel-default">
     <!-- Panel header -->
     <div class="panel-heading">
-        <h3 class="panel-title"><?= h('Pattern id: ' . $pattern->id) ?></h3>
+        <h3 class="panel-title"><?= h($pattern->id) ?></h3>
     </div>
     <table class="table table-striped" cellpadding="0" cellspacing="0">
         <tr>
@@ -37,16 +41,16 @@ $this->end();
             <td><?= $pattern->has('employee') ? $this->Html->link($pattern->employee->full_name, ['controller' => 'Employees', 'action' => 'view', $pattern->employee->id]) : '' ?></td>
         </tr>
         <tr>
-            <td><?= __('Start Time') ?></td>
-            <td><?= h($pattern->start_time->format('H:i')) ?></td>
+            <td><?= __('Resource') ?></td>
+            <td><?= $pattern->has('resource') ? $this->Html->link($pattern->resource->title, ['controller' => 'Resources', 'action' => 'view', $pattern->resource->id]) : '' ?></td>
         </tr>
         <tr>
-            <td><?= __('End Time') ?></td>
-            <td><?= h($pattern->end_time->format('H:i')) ?></td>
+            <td><?= __('Id') ?></td>
+            <td><?= $this->Number->format($pattern->id) ?></td>
         </tr>
         <tr>
-            <td><?= __('Day Of Week') ?></td> 
-            <td><?php echo date('l', strtotime("Sunday +{$pattern->day_of_week} days")); ?></td>    
+            <td><?= __('Day Of Week') ?></td>
+            <td><?= $this->Number->format($pattern->day_of_week) ?></td>
         </tr>
         <tr>
             <td><?= __('Week Of Year') ?></td>
@@ -57,13 +61,23 @@ $this->end();
             <td><?= $this->Number->format($pattern->starting_on) ?></td>
         </tr>
         <tr>
+            <td><?= __('Repeat After') ?></td>
+            <td><?= $this->Number->format($pattern->repeat_after) ?></td>
+        </tr>
+<!--
+        <tr>
+            <td><?= __('Start Time') ?></td>
+            <td><?= h($pattern->start_time) ?></td>
+        </tr>
+        <tr>
+            <td><?= __('End Time') ?></td>
+            <td><?= h($pattern->end_time) ?></td>
+        </tr>
+-->
+        <tr>
             <td><?= __('Start Date') ?></td>
             <td><?= h($pattern->start_date) ?></td>
         </tr>
-        <tr>
-            <td><?= __('Night Shift') ?></td>
-            <td><?= h($pattern->night_shift ? 'Yes' : 'No') ?></td>
-        </tr>        
         <tr>
             <td><?= __('Created') ?></td>
             <td><?= h($pattern->created) ?></td>
@@ -71,6 +85,10 @@ $this->end();
         <tr>
             <td><?= __('Modified') ?></td>
             <td><?= h($pattern->modified) ?></td>
+        </tr>
+        <tr>
+            <td><?= __('Night Shift') ?></td>
+            <td><?= $pattern->night_shift ? __('Yes') : __('No'); ?></td>
         </tr>
     </table>
 </div>

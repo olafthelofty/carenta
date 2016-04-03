@@ -24,7 +24,9 @@ class PatternsControllerTest extends IntegrationTestCase
         'app.role_groups',
         'app.nationalities',
         'app.ethnicities',
-        'app.exit_destinations'
+        'app.exit_destinations',
+        'app.resources',
+        'app.events'
     ];
 
     /**

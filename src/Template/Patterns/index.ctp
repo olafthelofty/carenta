@@ -6,6 +6,8 @@ $this->start('tb_actions');
     <li><?= $this->Html->link(__('New Pattern'), ['action' => 'add']); ?></li>
     <li><?= $this->Html->link(__('List Employees'), ['controller' => 'Employees', 'action' => 'index']); ?></li>
     <li><?= $this->Html->link(__('New Employee'), ['controller' => ' Employees', 'action' => 'add']); ?></li>
+    <li><?= $this->Html->link(__('List Resources'), ['controller' => 'Resources', 'action' => 'index']); ?></li>
+    <li><?= $this->Html->link(__('New Resource'), ['controller' => ' Resources', 'action' => 'add']); ?></li>
 <?php $this->end(); ?>
 <?php $this->assign('tb_sidebar', '<ul class="nav nav-sidebar">' . $this->fetch('tb_actions') . '</ul>'); ?>
 
@@ -14,12 +16,11 @@ $this->start('tb_actions');
         <tr>
             <th><?= $this->Paginator->sort('id'); ?></th>
             <th><?= $this->Paginator->sort('employee_id'); ?></th>
-            <th><?= $this->Paginator->sort('day_of_week', 'Day of Week'); ?></th>
-            <th><?= $this->Paginator->sort('week_of_year', 'Repeat Every'); ?></th>
-            <th><?= $this->Paginator->sort('starting_on', 'Start Week'); ?></th>
+            <th><?= $this->Paginator->sort('day_of_week'); ?></th>
+            <th><?= $this->Paginator->sort('week_of_year'); ?></th>
+            <th><?= $this->Paginator->sort('starting_on'); ?></th>
             <th><?= $this->Paginator->sort('start_time'); ?></th>
             <th><?= $this->Paginator->sort('end_time'); ?></th>
-            <th><?= $this->Paginator->sort('night_shift'); ?></th>
             <th class="actions"><?= __('Actions'); ?></th>
         </tr>
     </thead>
@@ -30,12 +31,11 @@ $this->start('tb_actions');
             <td>
                 <?= $pattern->has('employee') ? $this->Html->link($pattern->employee->full_name, ['controller' => 'Employees', 'action' => 'view', $pattern->employee->id]) : '' ?>
             </td>
-            <td><?php echo date('l', strtotime("Sunday +{$pattern->day_of_week} days")); ?></td>
+            <td><?= $this->Number->format($pattern->day_of_week) ?></td>
             <td><?= $this->Number->format($pattern->week_of_year) ?></td>
             <td><?= $this->Number->format($pattern->starting_on) ?></td>
-            <td><?= h($pattern->start_time->format('H:i')) ?></td>
-            <td><?= h($pattern->end_time->format('H:i')) ?></td>
-            <td><?= h($pattern->night_shift ? 'Yes' : 'No') ?></td>
+            <td><?= h($pattern->start_time) ?></td>
+            <td><?= h($pattern->end_time) ?></td>
             <td class="actions">
                 <?= $this->Html->link('', ['action' => 'view', $pattern->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>
                 <?= $this->Html->link('', ['action' => 'edit', $pattern->id], ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']) ?>

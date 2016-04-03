@@ -44,8 +44,8 @@ class ResourcesFixture extends TestFixture
             'title' => 'Lorem ipsum dolor sit amet',
             'parentID' => 1,
             'duration' => 1,
-            'start_time' => '08:07:24',
-            'end_time' => '08:07:24'
+            'start_time' => '08:12:42',
+            'end_time' => '08:12:42'
         ],
     ];
 }

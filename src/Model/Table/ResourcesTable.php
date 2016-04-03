@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
  * Resources Model
  *
  * @property \Cake\ORM\Association\HasMany $Events
+ * @property \Cake\ORM\Association\HasMany $Patterns
  */
 class ResourcesTable extends Table
 {
@@ -30,6 +31,9 @@ class ResourcesTable extends Table
         $this->primaryKey('id');
 
         $this->hasMany('Events', [
+            'foreignKey' => 'resource_id'
+        ]);
+        $this->hasMany('Patterns', [
             'foreignKey' => 'resource_id'
         ]);
     }

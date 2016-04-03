@@ -69,10 +69,12 @@ $this->start('tb_body_start');
 
     <div class="container-fluid">
         <div class="row">
+<!--
             <div class="col-sm-3 col-md-2 sidebar">
                 <?= $this->fetch('tb_sidebar') ?>
             </div>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+-->
+            <div class="col-sm-12 col-sm-offset-0 col-md-12 col-md-offset-0 main">
 <?php
 /**
  * Default `flash` block.

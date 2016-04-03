@@ -36,12 +36,21 @@ class EmployeesController extends AppController
      */
     public function view($id = null)
     {
-        $employee = $this->Employees->get($id, [
-            'contain' => ['Counties', 'ExitReasons', 'Roles', 'Nationalities', 'Ethnicities', 'ExitDestinations', 'Patterns']
-        ]);
+//        $employee = $this->Employees->get($id, [
+//            'contain' => ['Counties', 'ExitReasons', 'Roles', 'Nationalities', 'Ethnicities', 'ExitDestinations', 'Patterns']
+//        ]);
+//
+//        $this->set('employee', $employee);
+//        $this->set('_serialize', ['employee']);
+        
+        $this->paginate = [
+            'contain' => ['Counties', 'ExitReasons', 'Roles', 'Nationalities', 'Ethnicities', 'ExitDestinations', 'Patterns'],
+            'limit' => 1
+        ];
+        $employees = $this->paginate($this->Employees);
 
-        $this->set('employee', $employee);
-        $this->set('_serialize', ['employee']);
+        $this->set(compact('employees'));
+        $this->set('_serialize', ['employees']);        
     }
 
     /**

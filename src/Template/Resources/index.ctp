@@ -6,6 +6,8 @@ $this->start('tb_actions');
     <li><?= $this->Html->link(__('New Resource'), ['action' => 'add']); ?></li>
     <li><?= $this->Html->link(__('List Events'), ['controller' => 'Events', 'action' => 'index']); ?></li>
     <li><?= $this->Html->link(__('New Event'), ['controller' => ' Events', 'action' => 'add']); ?></li>
+    <li><?= $this->Html->link(__('List Patterns'), ['controller' => 'Patterns', 'action' => 'index']); ?></li>
+    <li><?= $this->Html->link(__('New Pattern'), ['controller' => ' Patterns', 'action' => 'add']); ?></li>
 <?php $this->end(); ?>
 <?php $this->assign('tb_sidebar', '<ul class="nav nav-sidebar">' . $this->fetch('tb_actions') . '</ul>'); ?>
 
@@ -18,6 +20,7 @@ $this->start('tb_actions');
             <th><?= $this->Paginator->sort('duration'); ?></th>
             <th><?= $this->Paginator->sort('start_time'); ?></th>
             <th><?= $this->Paginator->sort('end_time'); ?></th>
+            <th><?= $this->Paginator->sort('event_background_color'); ?></th>
             <th class="actions"><?= __('Actions'); ?></th>
         </tr>
     </thead>
@@ -30,6 +33,7 @@ $this->start('tb_actions');
             <td><?= $this->Number->format($resource->duration) ?></td>
             <td><?= h($resource->start_time) ?></td>
             <td><?= h($resource->end_time) ?></td>
+            <td style='background-color:<?php echo $resource->event_background_color; ?>'><?= h($resource->event_background_color) ?></td>
             <td class="actions">
                 <?= $this->Html->link('', ['action' => 'view', $resource->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>
                 <?= $this->Html->link('', ['action' => 'edit', $resource->id], ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']) ?>

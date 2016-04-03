@@ -37,6 +37,34 @@ class EventsController extends AppController
 //
 //    } 
     
+public function ajaxAdd()
+{
+    $this->autoRender=false;
+//      if($this->RequestHandler->isAjax()){
+//         Configure::write('debug', 0);
+//      }
+        if(!empty($this->request->data())){
+            $inputData = array();
+            $inputData['Events']['title'] = $this->request->data('title');
+            $inputData['Events']['startdate'] = $this->request->data('startdate');
+            $inputData['Events']['enddate'] = $this->request->data('enddate');
+            $inputData['Events']['allDay'] = $this->request->data('allDay');
+            $inputData['Events']['pattern_id'] = $this->request->data('pattern_id');
+            $inputData['Events']['resource_id'] = $this->request->data('resource_id');
+            
+            //$data = $this->Event->findByTitle($inputData['Event']['title']);
+            $this->Events->create();
+           if(empty($data))
+           {                   
+              if($this->Events->save($inputData))
+                  return "success"; 
+            }else
+            {
+             return "error";
+           }
+        }
+    }
+    
 function eventadd($allday=null,$day=null,$month=null,$year=null,$hour=null,$min=null) {
         if (empty($this->data)) {
             //Set default duration: 1hr and format to a leading zero.

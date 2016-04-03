@@ -42,6 +42,7 @@ class ResourcesController extends AppController
                 $data[] = array(
                         'id' => $resource['id'],
                         'title'=> $resource['title'],
+                        'eventBackgroundColor' => $resource['event_background_color'],
                         'parentId' => $parentId
 
                 );
