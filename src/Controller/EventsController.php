@@ -2,7 +2,8 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-
+use Cake\ORM\TableRegistry;
+use Cake\I18n\Time;
 /**
  * Events Controller
  *
@@ -10,32 +11,105 @@ use App\Controller\AppController;
  */
 class EventsController extends AppController
 {
- 
+    public function patternevent($id = null) {
+        $patterns = TableRegistry::get('Patterns');
+
+        $dowMap = array('SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA');
+
+        // pattern array
+        $query = $patterns->find('all', [
+            'contain' => ['Resources', 'Employees']
+        ]);
+        
+        foreach ($query as $row) {
+            $eventsTable = TableRegistry::get('Events');
+            $event = $eventsTable->newEntity();
+            
+            $freq = 'WEEKLY';
+            $count = 12;
+            $interval = $row['repeat_after'];
+            $wkst = $row['day_of_week'];
+            //print_r($wkst);
+            $byweekday = $dowMap[$row['day_of_week'] - 1];         
+            
+            // create date schedule array
+            $timezone    = 'UTC';
+            $startDate   = new \DateTime('2016-04-07', new \DateTimeZone($timezone));
+            //$endDate     = new \DateTime('2013-06-14 20:00:00', new \DateTimeZone($timezone)); // Optional
+            $rule = new \Recurr\Rule(
+                'FREQ=' . $freq . ';' . 
+                'COUNT=' . $count . ';' . 
+                'INTERVAL=' . $interval . ';' . 
+                //'WKST=' . $wkst . ';' . 
+                'BYDAY=' . $byweekday// . ',' . $startDate 
+                 );
+            
+            $transformer = new \Recurr\Transformer\ArrayTransformer();
+
+           // echo '<pre>';
+            $array = $transformer->transform($rule);
+            
+            foreach ($array as $line) {
+            
+                if(!empty($query)){
+                    //loop through patterns to
+                    //create all events based on current employee id and current pattern(s)
+                    //save to db
+                    
+                    //format start and end dates including adding start / end hours and minutes
+                    $starthours = date('H', strtotime($row->resource->start_time));
+                    $startmins = date('i', strtotime($row->resource->start_time));
+                    $start = new Time($line->getStart()->format('Y-m-d 00:00:00'));
+                    $start->modify('+' . $starthours . ' hours');
+                    $start->modify('+' . $startmins . ' minutes');
+
+                    $endhours = date('H', strtotime($row->resource->end_time));
+                    $endmins = date('i', strtotime($row->resource->end_time));
+                    $end = new Time($line->getStart()->format('Y-m-d 00:00:00'));
+                    $end->modify('+' . $endhours . ' hours');
+                    $end->modify('+' . $endmins . ' minutes');                                      
+
+                    // event model to save
+                    $event->title = $row->employee->first_name[0] . ' ' . $row->employee->last_name . ' - ' . $row->resource->title;
+                    $event->startdate = $start;
+                    $event->enddate = $end;
+                    $event->allDay = ($row->resource_id == 9) ? 'true' : 'false';
+                    $event->pattern_id = $row->id;
+                    $event->resource_id = $row->resource_id; 
+                    $event->employee_id = $row->employee->id;
+                    $event->event_type = 'pattern';
+                    
+                    $eventsTable->save($event);
+                }
+           }
+        }
+
+//echo '<pre>';
+
+}
+
 //    // sets up a feed for calendar events, consumed as json
-//    public function feed() {
-//        
-//            //$vars = $this->params['url'];
-//            //$conditions = array('conditions' => array('UNIX_TIMESTAMP(start) >=' => $vars['start'], 'UNIX_TIMESTAMP(start) <=' => $vars['end']));
-//            $events = $this->Events->find('all');//, $conditions);
-//            foreach($events as $event) {
-//                
-////                if(!$resource['parentID'] == 0) {
-////                    $parentId = $resource['parentID'];
-////                }else{
-////                    $parentId = null;
-////                }     
-//
-//                $data[] = array(
-//                        'id' => $event['id'],
-//                        'employee_id'=> $event['employee_id'],
-//                        'day_of_week' => $event['day_of_week']
-//
-//                );
-//            }
-//
-//            $this->set(['events' => $data, '_serialize' => 'events']);
-//
-//    } 
+    public function viewalleventsfeed() {
+
+        $employee_id = $this->request->query('employee_id');
+        $events = $this->Events->find('all');//, $conditions);
+        
+        foreach($events as $event) {
+            $allday = ($event['allDay'] == "true") ? true : false;   
+
+            $data[] = array(
+                'id' => $event['id'],
+                'title' => $event['title'],
+                'start' => $event['startdate'],
+                'end' => $event['enddate'],
+                'resourceId' => $event['resource_id'],
+                'resourcesTitle' => $event['Resources']['title'],
+                'allDay' => $allday
+            );
+        }
+
+        $this->set(['events' => $data, '_serialize' => 'events']);
+    } 
     
 public function ajaxAdd()
 {
@@ -69,9 +143,7 @@ function eventadd($allday=null,$day=null,$month=null,$year=null,$hour=null,$min=
         if (empty($this->data)) {
             //Set default duration: 1hr and format to a leading zero.
             $hourPlus=intval($hour)+1;
-            
-            
-            
+       
             if (strlen($hourPlus)==1) {
                 $hourPlus = '0'.$hourPlus;
             }
@@ -118,12 +190,9 @@ function eventadd($allday=null,$day=null,$month=null,$year=null,$hour=null,$min=
         }
     
     //echo json_encode($this->data);
-    
-    
+   
     }
 
-   
-    
     /**
      * Index method
      *

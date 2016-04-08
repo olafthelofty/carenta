@@ -154,9 +154,16 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                             <h3 class="panel-title"><?php echo 'Shift Pattern for ' . $employee->full_name; ?></h3>
                         </div>
 
-                            <button type="button" class="btn btn-success btn-sm" id="testStuff">Test</button>
-                            <button type="button" data-id=<?php echo $employee->id; ?> class="btn btn-success btn-sm" id="patternApply">Apply Shift Template</button>
+                            <!--<button type="button" class="btn btn-success btn-sm" id="testStuff">Test</button>
+                            <button type="button" data-id=<?php echo $employee->id; ?> class="btn btn-success btn-sm" id="patternApply">Apply Shift Template</button>-->
+                            <?php
 
+                                    echo $this->Html->link('Test',
+                                    array('controller' => 'Events', 'action' => 'patternevent'),
+                                    array('class' => 'btn btn-danger btn-sm active')
+                                    ); 
+                    
+                            ?>
                             <?php
 
                                 if (!empty($employee->patterns)){

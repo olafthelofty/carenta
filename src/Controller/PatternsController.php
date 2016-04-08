@@ -47,7 +47,7 @@ class PatternsController extends AppController
                 );
             }
         
-        //Do not use a view template.
+            //Do not use a view template.
             //$this->layout="empty";
 
             $this->set(['patterns' => $data, '_serialize' => 'patterns']);

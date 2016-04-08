@@ -1,20 +1,22 @@
 $(document).ready(function(){
     
-    $("#patternRefresh").click(function(){
-        
-        $('#calendar').fullCalendar('removeEvents');
-        getFreshEvents();
-        $.toaster({ priority : 'success', title : 'Calendar:', message : 'Updated' });
-
+    $("#patternRefresh").click(function(){       
+        patternRefresh();
     });
     
-    $("#patternApply").click(function(){ 
+    $("#patternApply").click(function(){  
         var empID = $(this).attr('data-id');
         patternApply(empID);
     
     });
     
     $("#testStuff").click(function(){ testStuff();});
+    
+    function patternRefresh (){
+        $('#calendar').fullCalendar('removeEvents');
+        getFreshEvents();
+        $.toaster({ priority : 'success', title : 'Calendar:', message : 'Updated' });
+    }
    
     function randomToast ()
         {
@@ -42,16 +44,17 @@ $(document).ready(function(){
 
     function patternApply(employeeID){
         //delete current events for this employee
-        $.ajax({
-			url: '../../php/process.php',
-	        type: 'POST', // Send post data
-	        data: {type: 'delete', empID: employeeID},
-	        //async: false,
-	        success: function(s){
-	        	//freshevents = s;
-                console.log("good")
-	        }
-		});
+        // $.ajax({
+		// 	url: '../../php/process.php',
+        //     //url: 'http://carenta.somervillehouse.co.uk/events/patternevent',
+	    //     type: 'POST', // Send post data
+	    //     data: {type: 'delete', empID: employeeID},
+	    //     //async: false,
+	    //     success: function(s){
+	    //     	//freshevents = s;
+        //         console.log(s)
+	    //     }
+		// });
 
         //apply and save new events from current pattern
         var results;
@@ -59,15 +62,15 @@ $(document).ready(function(){
         $.getJSON('http://carenta.somervillehouse.co.uk/patterns/feed?employee_id=' + employeeID, function(data){
             $.each(data, function(key, val) {
 
-                //create a later.js schedule
-                var sched = later.schedule(later.parse.recur()
-                //.on(val.day_of_week).dayOfWeek().every(val.weekOfYear).weekOfYear().startingOn(val.startingOn)), start = new Date('2016,03,22');
-                .on(val.day_of_week).dayOfWeek().every(val.weekOfYear).weekOfYear()), start = new Date('2016,03,27');
+                // create a later.js schedule using recur
+                var sched = later.schedule(later.parse.recur()  
+                //on week day_of_week                      every n weeks          start from
+                .on(val.day_of_week).dayOfWeek().every(1).weekOfYear()), start = new Date('2016,03,26');  
 
                 results = sched.next(10, start);
 
                 //create newEvents array to hold entire schedule
-                var newEvents = [];
+                //var newEvents = [];
                 for (var i = 0; i < results.length; i++) {
                     
                         var allDayVal;
@@ -77,57 +80,41 @@ $(document).ready(function(){
                         else
                         {allDayVal = false;console.log(allDayVal);}
                     
-                    var event = new Object();
+                    //var event = new Object();
+                    var data = {
                     
-                    event = {
-                        
-                        //  startdate:moment(results[i]).transform(
-                        // 'YYYY-MM-DD ' 
-                        // + parseInt(moment(val.starttime).format("HH")) 
-                        // + ':' 
-                        // + parseInt(moment(val.starttime).format("mm")) 
-                        // + ':00'
-                        // ), 
-                        
-                        startdate: new Date(moment(results[i].setHours(parseInt(moment(val.starttime).utc().format("HH")), parseInt(moment(val.starttime).utc().format("mm"))))),
-                        enddate: new Date(moment(results[i].setHours(parseInt(moment(val.endtime).utc().format("HH")), parseInt(moment(val.endtime).utc().format("mm"))))),
+                   // event = {           
+                        "data['Events']['startdate']": new Date(moment(results[i].setHours(parseInt(moment(val.starttime).utc().format("HH")), parseInt(moment(val.starttime).utc().format("mm"))))),
+                        "data['Events']['enddate']" : new Date(moment(results[i].setHours(parseInt(moment(val.endtime).utc().format("HH")), parseInt(moment(val.endtime).utc().format("mm"))))),
  
-                        title: val.employee_name,
-                        allDay: allDayVal,
-                        resource_id: val.resource_id,
-                        pattern_id: val.pattern_id,
-                        employee_id: val.employee_id,
-                        event_type: val.event_type,
-                        zone: "00:00"  //Change this to your timezone
+                        "data['Events']['title']" :val.employee_name,
+                        "data['Events']['allDay']" : allDayVal,
+                        "data['Events']['resource_id']" : val.resource_id,
+                        "data['Events']['pattern_id']" : val.pattern_id,
+                        "data['Events']['employee_id']": val.employee_id,
+                        "data['Events']['event_type']" : val.event_type,
+                        "data['Events']['zone']" : "00:00"  //Change this to your timezone
                     };
-                    newEvents.push(event);
+                    //newEvents.push(event);
 
                 }
 
-                console.log(newEvents);
-                //console.log(allDayVal);
+                console.log(JSON.stringify(data));
                 
-             // DO NOT DELETE!!!!
-                    
+                // DO NOT DELETE!!!!   
                 $.ajax({
-                    url: '../../php/process.php',
-                    //data: 'type=new&title='+title+'&startdate='+start+'&zone='+zone,
-                    data: { type:'patternevent', empID: val.employee_id, newEvents: newEvents },
                     type: 'POST',
-                    dataType: 'json',
-                    success: function(response){
-                        event.id = response.eventid;
-                        $('#calendar').fullCalendar('updateEvent', newEvents);
-                        getFreshEvents();
-                        
-                    },
-                    error: function(e){
-                        console.log(e.responseText);
-                        //console.log('go away');
-                    }
-              });
+                    url: 'http://carenta.somervillehouse.co.uk/events/patternevent/',
+                    data: data
+                })
+                .done( function( data ) {
+                    console.log( data );
+                })
+                .fail(function( data ) {
+                    console.log( data );
+                });
             
-            // END DO NOT DELETE!!!!
+                // END DO NOT DELETE!!!!
 
             });
 

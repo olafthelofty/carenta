@@ -17,34 +17,34 @@ if($type == 'delete')
 		echo json_encode(array('status'=>'event delete failed'));
 }
 
-if($type == 'patternevent')
-{
-    //$_POST['newEvents'];
+// if($type == 'patternevent')
+// {
+//     //$_POST['newEvents'];
     
-    // $empid = $_POST['empID'];
-	// $delete = mysqli_query($con,"DELETE FROM events where employee_id='$empid'");
-	// if($delete)
-	// 	echo json_encode(array('status'=>'event delete success'));
-	// else
-	// 	echo json_encode(array('status'=>'event delete failed'));
+//     //$empid = $_POST['empID'];
+// 	// $delete = mysqli_query($con,"DELETE FROM events where employee_id='$empid'");
+// 	// if($delete)
+// 	// 	echo json_encode(array('status'=>'event delete success'));
+// 	// else
+// 	// 	echo json_encode(array('status'=>'event delete failed'));
     
     
-    foreach($_POST['newEvents'] as $value) {
+//     foreach($_POST['newEvents'] as $value) {
     
-	$startdate = $value['startdate'].'+'.$value['zone'];
-    $enddate = $value['enddate'].'+'.$value['zone'];   
-	$title = $value['title'];
-    $resource_id = $value['resource_id']; 
-    $pattern_id = $value['pattern_id']; 
-    $employee_id = $value['employee_id'];
-    $event_type = $value['event_type'];
-    $allDay = $value['allDay'];
-	$insert = mysqli_query($con,"INSERT INTO events(`title`, `startdate`, `enddate`, `allDay`, `resource_id`, `pattern_id`, `employee_id`, `event_type`) VALUES('$title','$startdate','$enddate','$allDay', '$resource_id', '$pattern_id', '$employee_id', '$event_type')");
-    //$insert = mysqli_query($con,"INSERT INTO events( `startdate`) VALUES('$startdate')");
-	$lastid = mysqli_insert_id($con);
-	echo json_encode(array('status'=>'success','eventid'=>$lastid));
-    }
-}
+// 	$startdate = $value['startdate'];.'+'.$value['zone'];
+//     $enddate = $value['enddate'].'+'.$value['zone'];   
+// 	$title = $value['title'];
+//     $resource_id = $value['resource_id']; 
+//     $pattern_id = $value['pattern_id']; 
+//     $employee_id = $value['employee_id'];
+//     $event_type = $value['event_type'];
+//     $allDay = $value['allDay'];
+// 	$insert = mysqli_query($con,"INSERT INTO events(`title`, `startdate`, `enddate`, `allDay`, `resource_id`, `pattern_id`, `employee_id`, `event_type`) VALUES('$title','$startdate','$enddate','$allDay', '$resource_id', '$pattern_id', '$employee_id', '$event_type')");
+//     //$insert = mysqli_query($con,"INSERT INTO events( `startdate`) VALUES('$startdate')");
+// 	$lastid = mysqli_insert_id($con);
+// 	echo json_encode(array('status'=>'success','eventid'=>$lastid));
+//     }
+// }
 
 if($type == 'new')
 {
@@ -93,10 +93,14 @@ if($type == 'remove')
 
 if($type == 'fetch')
 {
+    //echo $_POST['employeeID'];
     $employee_id = $_POST['employeeID'];
 	$events = array();
-	$query = mysqli_query($con, 
-        "
+    //$query = mysqli_query($con, "SELECT * FROM calendar");
+	$query = mysqli_query($con,
+    
+    //"SELECT * FROM events WHERE employee_id='$employee_id'" 
+       "
         SELECT 
             events.id, 
             events.title, 
@@ -113,7 +117,9 @@ if($type == 'fetch')
             events.resource_id = resources.id 
         WHERE 
             events.employee_id ='$employee_id'
-        "
+       "
+        
+        
         );
 	while($fetch = mysqli_fetch_array($query,MYSQLI_ASSOC))
 	{

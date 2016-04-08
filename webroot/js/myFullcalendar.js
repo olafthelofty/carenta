@@ -43,11 +43,13 @@ $(document).ready(function(){
 	$.ajax({
 		url: '../../php/process.php',
         type: 'POST', // Send post data
-        data: 'type=fetch&employeeID='+empID,     
-        
+        data: 'type=fetch&employeeID='+empID,         
+        //dataType: 'json',
         async: false,
         success: function(s){
+            
         	json_events = s;
+            
         }
 	});
 
@@ -93,7 +95,8 @@ $(document).ready(function(){
             aspectRatio: 2.5,
             scrollTime: '00:00',   
             
-			events: JSON.parse(json_events),
+			//events: JSON.parse(json_events),
+            events: {url: 'http://carenta.somervillehouse.co.uk/events/viewalleventsfeed'},
             eventRender: function(event, element) { 
                 element.find('.fc-title').append("<br/>" + event.resourcesTitle); 
             }, 
