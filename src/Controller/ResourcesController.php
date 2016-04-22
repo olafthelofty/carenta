@@ -22,22 +22,7 @@ class ResourcesController extends AppController
                     $parentId = $resource['parentID'];
                 }else{
                     $parentId = null;
-                }
-                
-                // format resource headings
-                //$durationHrs = ($resource['duration'] / 60 / 60);
-//                $durationHrs = ($resource['end_time'] - $resource['start_time']) ;
-//                
-//                if($resource['duration'] != 0) {
-//                    if($resource['duration'] == 3600) {
-//                        $title = $resource['title'] . ' ('. $durationHrs . ' hr)';
-//                    }
-//                    if($resource['duration'] != 3600) {
-//                        $title = $resource['title'] . ' ('. $durationHrs . ' hrs)';
-//                    }
-//                }else{
-//                    $title = $resource['title'];    
-//                }      
+                }     
 
                 $data[] = array(
                         'id' => $resource['id'],
@@ -115,6 +100,7 @@ class ResourcesController extends AppController
         $resource = $this->Resources->get($id, [
             'contain' => []
         ]);
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $resource = $this->Resources->patchEntity($resource, $this->request->data);
             if ($this->Resources->save($resource)) {

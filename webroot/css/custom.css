@@ -48,3 +48,9 @@
 		float: right;
 /*		width: 900px;*/
 	}
+    
+.table td.fit, 
+.table th.fit {
+    white-space: nowrap;
+    width: 1%;
+}    

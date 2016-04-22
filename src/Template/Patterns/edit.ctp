@@ -45,7 +45,7 @@ $this->end();
     <legend><?= __('Edit Shift {0}', ['Pattern']) ?></legend>
     <?php
     echo $this->Form->input('employee_id', ['options' => $employees]);
-        
+     
     echo $this->Form->input('day_of_week', array(
         'options' => array(
             '1' => 'Sunday',
@@ -106,7 +106,8 @@ $this->end();
             'empty' => '',
             'label' => 'Pattern Length'));        
         
-    echo $this->Form->input('start_date');
+    //echo $this->Form->input('start_date');
+    echo $this->Form->text('start_date', ['id'=>'datepicker']);
     echo $this->Form->input('night_shift');
     echo $this->Form->input('resource_id', ['options' => $resources]);        
     ?>

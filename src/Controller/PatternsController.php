@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\ORM\TableRegistry;
 
 /**
  * Patterns Controller
@@ -13,44 +14,44 @@ class PatternsController extends AppController
     // sets up a feed for calendar events, consumed as json
     public function feed() {
         
-        $employee_id = $this->request->query('employee_id');
-            //$vars = $this->params['url'];
-            //$conditions = array('conditions' => array('UNIX_TIMESTAMP(start) >=' => $vars['start'], 'UNIX_TIMESTAMP(start) <=' => $vars['end']));
+        // $employee_id = $this->request->query('employee_id');
+        //     //$vars = $this->params['url'];
+        //     //$conditions = array('conditions' => array('UNIX_TIMESTAMP(start) >=' => $vars['start'], 'UNIX_TIMESTAMP(start) <=' => $vars['end']));
         
-            $patterns = $this->Patterns->find('all', [
-                'contain' => ['Employees', 'Resources'],
-                'conditions' => ['Patterns.employee_id' => $employee_id]
-            ]);
+        //     $patterns = $this->Patterns->find('all', [
+        //         'contain' => ['Employees', 'Resources'],
+        //         'conditions' => ['Patterns.employee_id' => $employee_id]
+        //     ]);
         
-            foreach($patterns as $pattern) {
+        //     foreach($patterns as $pattern) {
                 
-                //get first name initial
-                $employee_initial = substr($pattern['employee']['first_name'], 0, 1);
+        //         //get first name initial
+        //         $employee_initial = substr($pattern['employee']['first_name'], 0, 1);
 
-                // create data array to send to patterns/feed.json
-                $data[] = array(
-                        'id' => $pattern['id'],
-                        'employee_id'=> $pattern['employee_id'],
-                        'day_of_week' => $pattern['day_of_week'],
-                        'week_of_year' => $pattern['week_of_year'],
-                        'starting_on' => $pattern['starting_on'],
-                        'night_shift' => $pattern['night_shift'],
-                        'resource_id' => $pattern['resource_id'],
-                        'title' => $pattern['resource']['title'],
-                        'starttime' => $pattern['resource']['start_time'],
-                        'endtime' => $pattern['resource']['end_time'],
-                        'resourceTitle' => $pattern['resource']['title'],
-                        'employee_name' => $employee_initial . ' ' . $pattern['employee']['last_name'],
-                        'pattern_id'=> $pattern['id'],
-                        'event_type' => $pattern['event_type']
+        //         // create data array to send to patterns/feed.json
+        //         $data[] = array(
+        //                 'id' => $pattern['id'],
+        //                 'employee_id'=> $pattern['employee_id'],
+        //                 'day_of_week' => $pattern['day_of_week'],
+        //                 'week_of_year' => $pattern['week_of_year'],
+        //                 'starting_on' => $pattern['starting_on'],
+        //                 'night_shift' => $pattern['night_shift'],
+        //                 'resource_id' => $pattern['resource_id'],
+        //                 'title' => $pattern['resource']['title'],
+        //                 'starttime' => $pattern['resource']['start_time'],
+        //                 'endtime' => $pattern['resource']['end_time'],
+        //                 'resourceTitle' => $pattern['resource']['title'],
+        //                 'employee_name' => $employee_initial . ' ' . $pattern['employee']['last_name'],
+        //                 'pattern_id'=> $pattern['id'],
+        //                 'event_type' => $pattern['event_type']
 
-                );
-            }
+        //         );
+        //     }
         
-            //Do not use a view template.
-            //$this->layout="empty";
+        //     //Do not use a view template.
+        //     //$this->layout="empty";
 
-            $this->set(['patterns' => $data, '_serialize' => 'patterns']);
+        //     $this->set(['patterns' => $data, '_serialize' => 'patterns']);
 
     } 
 
@@ -96,54 +97,96 @@ class PatternsController extends AppController
     // delete pattern template and all events for this pattern
     public function deleteWeekTemplate($id=null)
     {
-        $employee = $this->request->query('employee_id');
-        //$pattern = $this->request->data('id');
+        
+        // $employee_id = $this->request->query('employee_id');
+        
+        // $patterns = TableRegistry::get('Patterns');
+        
+        // $results = $this->Patterns->deleteAll(
+        //     [
+        //    'employee_id' => 24
+        //    ],
+        //     false // <- single delete statement please
+        // );
+        
+        // return $this->redirect($this->referer());
+        
+        
+        
+        // $query = $this->Patterns->findAllByEmployee_id($employee_id);
+        //    // ->where(['Patterns.employee_id' => $employee_id])
+        //     //->contain(['Events']);
+        
+        // if ($this->Patterns->deleteAll([$query])) 
+        // {
+        //     $this->Flash->success(__('Pattern template has been deleted.'));
+        //     return $this->redirect($this->referer());
+        // }else{
+        //     $this->Flash->error(__('Sorry no can do.....'));
+        // }
 
-        if ($this->Patterns->deleteAll(['employee_id' => $employee])) 
-        {
-            $this->Flash->success(__('Pattern template has been deleted.'));
-        }else{
+    // if ($this->Patterns->Events->deleteAll(['employee_id' => $employee])) 
+    //     {
+    //         $this->Flash->success(__('Events have been deleted.'));
+    //         return $this->redirect($this->referer());
+    //     }else{
 
-            $this->Flash->error(__('Sorry no can do.....'));
-
-        }
-
-    if ($this->Patterns->Events->deleteAll(['employee_id' => $employee])) 
-        {
-            $this->Flash->success(__('Events have been deleted.'));
-            return $this->redirect($this->referer());
-        }else{
-
-            $this->Flash->error(__('Sorry no can do events.....'));
-        }        
+    //         $this->Flash->error(__('Sorry no can do events.....'));
+    //     }        
             
-        $this->autoRender = false;
+    //     $this->autoRender = false;
     }
     
     public function addWeekTemplate()
     {
-        //add a 7 day set of patterns for employee
-
+        $patternsTable = TableRegistry::get('Patterns');
+        //add a 7 day template of patterns for employee
         $x = 1;
         $employee = $this->request->query('employee_id');
+        $selecteddate = $this->request->query('selecteddate');
         
-        //$query = $this->Patterns->find('first', ['employee_id' => $employee]);
-        $query = $this->Patterns->findAllByEmployee_id($employee);
-        
-        if (!$query->isEmpty()) {
-             exit("gone");
+        // check if date picker date has been selected
+        if($selecteddate){
+            $startDate = \DateTime::createFromFormat('Y-m-d', $selecteddate);
+            $startDate->format('Y-m-d');          
+            $startDate->modify('-1 day');
+            
+        }else{
+
+            $dateObj = new \DateTime();
+            // create a start date that is 1st April of the current year - includes
+            // test if we are in Jan/Feb or Mar
+            $startMonth = $dateObj->format("m");
+            
+            if($startMonth == '01' || $startMonth == '02' || $startMonth == '03')
+                {
+                    $startDate = $dateObj->modify("-1 year");
+                    $startDate = $startDate->format("Y-03-31");
+                }
+            else
+                {
+                    $startDate = $dateObj->format("Y-03-31");
+                }
+                
+            $startDate = strtotime('first Saturday of next month ' . $startDate); 
+            $startDate = new \DateTime("@$startDate"); 
+                
         }
-      
+
+        
+ 
         while($x <= 7) {
             
-            $pattern = $this->Patterns->newEntity();
+            $pattern = $patternsTable->newEntity();
             $pattern->employee_id = $employee;
             $pattern->day_of_week = $x;           
             $pattern->week_of_year = 1;
             $pattern->starting_on = 1;
             $pattern->repeat_after = 1;
             $pattern->night_shift = 0;
-            $pattern->resource_id = 1;
+            $pattern->resource_id = 11;
+            $pattern->start_date =  $startDate->modify('+1 day');
+            //$pattern->start_date =  $startDate;
             $pattern->event_type = 'pattern';
             
             $this->Patterns->save($pattern);
@@ -151,18 +194,11 @@ class PatternsController extends AppController
             $x++;
             
         }
-        
-            if ($this->Patterns->save($pattern)) {
-                $this->Flash->success(__('The Shift template has been saved.'));
-                //return $this->redirect(['controller' => 'employees', 'action' => 'view', $employee]);
-                return $this->redirect($this->referer());
-                
-            } else {
-                $this->Flash->error(__('The Shift template could not be saved. Please, try again.'));
-            }
-        
-        $this->autoRender = false;
-    }    
+
+        $this->Flash->success(__('The Shift template has been saved.'));
+        //return $this->redirect($this->referer());
+
+    }   
     
     public function add()
     {
@@ -227,7 +263,8 @@ class PatternsController extends AppController
         }
         
         $employees = $this->Patterns->Employees->find('list', ['limit' => 200]);
-        $resources = $this->Patterns->Resources->find('list', ['limit' => 200]);
+        //$resources = $this->Patterns->Resources->find('list', ['limit' => 200]);
+        $resources = $this->Patterns->Resources->find('all');
         $this->set(compact('pattern', 'employees', 'resources'));
         $this->set('_serialize', ['pattern']);
 

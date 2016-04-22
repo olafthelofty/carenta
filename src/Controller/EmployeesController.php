@@ -44,7 +44,7 @@ class EmployeesController extends AppController
 //        $this->set('_serialize', ['employee']);
         
         $this->paginate = [
-            'contain' => ['Counties', 'ExitReasons', 'Roles', 'Nationalities', 'Ethnicities', 'ExitDestinations', 'Patterns'],
+            'contain' => ['Counties', 'ExitReasons', 'Roles', 'Nationalities', 'Ethnicities', 'ExitDestinations', 'Patterns', 'Patterns.Resources'],
             'limit' => 1
         ];
         $employees = $this->paginate($this->Employees);

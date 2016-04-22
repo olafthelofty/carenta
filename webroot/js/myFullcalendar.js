@@ -38,20 +38,20 @@ $(document).ready(function(){
     // see http://www.jqueryajaxphp.com/fullcalendar-crud-with-jquery-and-php/
     
     var zone = "00:00";  //Change this to your timezone
-    var empID = $('#patternApply').attr('data-id');
+    var empID = $('#patternevent').attr('data-id');
 
-	$.ajax({
-		url: '../../php/process.php',
-        type: 'POST', // Send post data
-        data: 'type=fetch&employeeID='+empID,         
-        //dataType: 'json',
-        async: false,
-        success: function(s){
+	// $.ajax({
+	// 	url: '../../php/process.php',
+    //     type: 'POST', // Send post data
+    //     data: 'type=fetch&employeeID='+empID,         
+    //     //dataType: 'json',
+    //     async: false,
+    //     success: function(s){
             
-        	json_events = s;
+    //     	json_events = s;
             
-        }
-	});
+    //     }
+	// });
 
 	var currentMousePos = {
 	    x: -1,
@@ -85,7 +85,6 @@ $(document).ready(function(){
 
 		/* initialize the calendar
 		-----------------------------------------------------------------*/
-
 		$('#calendar').fullCalendar({
             
             schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
@@ -93,14 +92,15 @@ $(document).ready(function(){
             defaultDate: moment(),
             allDayDefault: false,
             aspectRatio: 2.5,
-            scrollTime: '00:00',   
+            scrollTime: '00:00',  
+            displayEventTime: false,
             
 			//events: JSON.parse(json_events),
-            events: {url: 'http://carenta.somervillehouse.co.uk/events/viewalleventsfeed'},
+            events: {url: 'http://carenta.somervillehouse.co.uk/events/viewalleventsfeed?employee_id='+empID},
             eventRender: function(event, element) { 
-                element.find('.fc-title').append("<br/>" + event.resourcesTitle); 
+               element.find('.fc-title').append("<br/>" + event.resourcesTitle); 
             }, 
-			//events: [{"id":"14","title":"New Event","start":"2015-01-24T16:00:00+04:00","allDay":false}],
+			//events: [{"id":"14","title":"New Event","start":"2016-04-24T16:00:00+04:00","allDay":false}],
 			//utc: true,
             local: true,
             nextDayThreshold: '00:00:00',
@@ -111,7 +111,7 @@ $(document).ready(function(){
                 right: 'timelineDay,timelineThreeDays,agendaFourWeeks,month,timelineMnth'
             },
             
-            defaultView: 'timelineDay',
+            defaultView: 'month',
             views: {
                 timelineThreeDays: {
                     type: 'timeline',
@@ -127,8 +127,10 @@ $(document).ready(function(){
                     type: 'month',
                     duration: { weeks: 4 },
                     buttonText: '4 Weeks',
-                    fixedWeekCount : false,
-                    allDayText: 'Non working'
+                    fixedWeekCount : true,
+                    allDayText: 'Non working',
+                    weekNumbers: true
+                    
                 }
             },
             resourceLabelText: 'Shift',
@@ -141,53 +143,53 @@ $(document).ready(function(){
 			editable: true,
 			droppable: true, 
 			slotDuration: '00:15:00',
-			eventReceive: function(event){
-				var title = event.title;
-				var start = event.start.format("YYYY-MM-DD[T]HH:mm:SS");
-                var end = event.end.format("YYYY-MM-DD[T]HH:mm:SS");
+			// eventReceive: function(event){
+			// 	var title = event.title;
+			// 	var start = event.start.format("YYYY-MM-DD[T]HH:mm:SS");
+            //     var end = event.end.format("YYYY-MM-DD[T]HH:mm:SS");
 
-                //var start = moment(event.start).format("DD-MM-YYYY HH:mm:ss");
-				$.ajax({
-		    		url: '../../php/process.php',
-		    		data: 'type=new&title='+title+'&startdate='+start+'&enddate='+end+'&zone='+zone,
-		    		type: 'POST',
-		    		dataType: 'json',
-		    		success: function(response){
-		    			event.id = response.eventid;
-		    			$('#calendar').fullCalendar('updateEvent',event);
-		    		},
-		    		error: function(e){
-		    			console.log(e.responseText);
+            //     //var start = moment(event.start).format("DD-MM-YYYY HH:mm:ss");
+			// 	$.ajax({
+		    // 		url: '../../php/process.php',
+		    // 		data: 'type=new&title='+title+'&startdate='+start+'&enddate='+end+'&zone='+zone,
+		    // 		type: 'POST',
+		    // 		dataType: 'json',
+		    // 		success: function(response){
+		    // 			event.id = response.eventid;
+		    // 			$('#calendar').fullCalendar('updateEvent',event);
+		    // 		},
+		    // 		error: function(e){
+		    // 			console.log(e.responseText);
 
-		    		}
-		    	});
-				$('#calendar').fullCalendar('updateEvent',event);
-				console.log(event);
-			},
-			eventDrop: function(event, delta, revertFunc) {
-		        var title = event.title;
-		        var start = event.start.format();
-		        var end = (event.end == null) ? start : event.end.format();
+		    // 		}
+		    // 	});
+			// 	$('#calendar').fullCalendar('updateEvent',event);
+			// 	console.log(event);
+			// },
+			// eventDrop: function(event, delta, revertFunc) {
+		    //     var title = event.title;
+		    //     var start = event.start.format();
+		    //     var end = (event.end == null) ? start : event.end.format();
 
-		        $.ajax({
-					url: '../../php/process.php',
-					data: 'type=resetdate&title='+title+'&start='+start+'&end='+end+'&eventid='+event.id,
-					type: 'POST',
-					dataType: 'json',
-					success: function(response){
-						if(response.status != 'success')		    				
-						revertFunc();
-					},
-					error: function(e){		    			
-						revertFunc();
-						alert('Error processing your request: '+e.responseText);
-					}
-				});
-		    },
+		    //     $.ajax({
+			// 		url: '../../php/process.php',
+			// 		data: 'type=resetdate&title='+title+'&start='+start+'&end='+end+'&eventid='+event.id,
+			// 		type: 'POST',
+			// 		dataType: 'json',
+			// 		success: function(response){
+			// 			if(response.status != 'success')		    				
+			// 			revertFunc();
+			// 		},
+			// 		error: function(e){		    			
+			// 			revertFunc();
+			// 			alert('Error processing your request: '+e.responseText);
+			// 		}
+			// 	});
+		    // },
             eventMouseover: function(event, jsEvent, view) {
                 //var end = (event.end == null) ? event.start.format() : event.end.format();
                 var content = '<h3>'+event.title+'</h3>' + 
-                    '<p><b>Start:</b> '+event.start.format()+'<br />' + 
+                    '<p><b>Start:</b> '+event.start.format('DD-MM-YYYY HH:mm')+'<br />' + 
                     '<p><b>End:</b> '+event.end.format()+'</p>';
 
                 tooltip.set({
@@ -210,51 +212,51 @@ $(document).ready(function(){
             eventResizeStart: function() { tooltip.hide() },
             eventDragStart: function() { tooltip.hide() },
             viewDisplay: function() { tooltip.hide() },
-			eventResize: function(event, delta, revertFunc) {
-				console.log(event);
-				var title = event.title;
-				//var end = event.end.format();
-                var end = (event.end == null) ? start : event.end.format();
-				var start = event.start.format();
+			// eventResize: function(event, delta, revertFunc) {
+			// 	console.log(event);
+			// 	var title = event.title;
+			// 	//var end = event.end.format();
+            //     var end = (event.end == null) ? start : event.end.format();
+			// 	var start = event.start.format();
   
-                $.ajax({
-				    		url: '../../php/process.php',
-				    		data: 'type=resetdate&title='+title+'&start='+start+'&end='+end+'&eventid='+event.id,
-				    		type: 'POST',
-				    		dataType: 'json',
-				    		success: function(response){	
-				    			if(response.status == 'success')			    			
-		              				$('#calendar').fullCalendar('updateEvent',event);
-				    		},
-				    		error: function(e){
-				    			alert('Error processing your request: '+e.responseText);
-				    		}
-				    	});
-		       // update(title,start,end,event.id);
-		    },
-			eventDragStop: function (event, jsEvent, ui, view) {
-			    if (isElemOverDiv()) {
-			    	var con = confirm('Are you sure to delete this event permanently?');
-			    	if(con == true) {
-						$.ajax({
-				    		url: '../../php/process.php',
-				    		data: 'type=remove&eventid='+event.id,
-				    		type: 'POST',
-				    		dataType: 'json',
-				    		success: function(response){
-				    			console.log(response);
-				    			if(response.status == 'success'){
-				    				$('#calendar').fullCalendar('removeEvents');
-            						getFreshEvents();
-            					}
-				    		},
-				    		error: function(e){	
-				    			alert('Error processing your request: '+e.responseText);
-				    		}
-			    		});
-					}   
-				}
-			}
+            //     $.ajax({
+			// 	    		url: '../../php/process.php',
+			// 	    		data: 'type=resetdate&title='+title+'&start='+start+'&end='+end+'&eventid='+event.id,
+			// 	    		type: 'POST',
+			// 	    		dataType: 'json',
+			// 	    		success: function(response){	
+			// 	    			if(response.status == 'success')			    			
+		    //           				$('#calendar').fullCalendar('updateEvent',event);
+			// 	    		},
+			// 	    		error: function(e){
+			// 	    			alert('Error processing your request: '+e.responseText);
+			// 	    		}
+			// 	    	});
+		    //    // update(title,start,end,event.id);
+		    // },
+			// eventDragStop: function (event, jsEvent, ui, view) {
+			//     if (isElemOverDiv()) {
+			//     	var con = confirm('Are you sure to delete this event permanently?');
+			//     	if(con == true) {
+			// 			$.ajax({
+			// 	    		url: '../../php/process.php',
+			// 	    		data: 'type=remove&eventid='+event.id,
+			// 	    		type: 'POST',
+			// 	    		dataType: 'json',
+			// 	    		success: function(response){
+			// 	    			console.log(response);
+			// 	    			if(response.status == 'success'){
+			// 	    				$('#calendar').fullCalendar('removeEvents');
+            // 						getFreshEvents();
+            // 					}
+			// 	    		},
+			// 	    		error: function(e){	
+			// 	    			alert('Error processing your request: '+e.responseText);
+			// 	    		}
+			//     		});
+			// 		}   
+			// 	}
+			// }
 		});
 
 	function getFreshEvents(){

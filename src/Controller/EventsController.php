@@ -1,55 +1,107 @@
 <?php
 namespace App\Controller;
+//namespace Carbon;
 
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
 use Cake\I18n\Time;
+
 /**
  * Events Controller
  *
  * @property \App\Model\Table\EventsTable $Events
  */
+ 
+ 
+// class Carbon extends \DateTime
+// {
+//     // code here
+//     echo CarbonInterval::months(3); 
+// } 
+ 
 class EventsController extends AppController
 {
     public function patternevent($id = null) {
+        
         $patterns = TableRegistry::get('Patterns');
+        $events = TableRegistry::get('Events');
+        $employee_id = $this->request->query('employee_id');
 
         $dowMap = array('SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA');
 
         // pattern array
+        // $query = $patterns->find('all', [
+        //     'contain' => ['Resources', 'Employees']
+        // ]);
+        
+         if ($events->deleteAll(['employee_id' => $employee_id, 'event_type' => 'pattern'], false))        
+            {
+                $this->Flash->success(__('Events deleted.'));   
+                //return $this->redirect($this->referer());
+            }
+        else
+            {
+                $this->Flash->error(__('No previous events to remove'));
+                //return $this->redirect($this->referer());
+            }
+        
+        
         $query = $patterns->find('all', [
+            'conditions' => ['employee_id' => $employee_id],
             'contain' => ['Resources', 'Employees']
-        ]);
+            ]);
         
         foreach ($query as $row) {
             $eventsTable = TableRegistry::get('Events');
-            $event = $eventsTable->newEntity();
-            
+            //$event = $eventsTable->newEntity();
             $freq = 'WEEKLY';
             $count = 12;
             $interval = $row['repeat_after'];
             $wkst = $row['day_of_week'];
-            //print_r($wkst);
-            $byweekday = $dowMap[$row['day_of_week'] - 1];         
             
+            // day of week
+            $byweekday = $row['day_of_week'];
+            // start date
+            $startDate = new \DateTime($row['start_date']); 
+            // end date
+            $endDate = $startDate
+            
+                
+                
             // create date schedule array
             $timezone    = 'UTC';
-            $startDate   = new \DateTime('2016-04-07', new \DateTimeZone($timezone));
-            //$endDate     = new \DateTime('2013-06-14 20:00:00', new \DateTimeZone($timezone)); // Optional
-            $rule = new \Recurr\Rule(
-                'FREQ=' . $freq . ';' . 
-                'COUNT=' . $count . ';' . 
-                'INTERVAL=' . $interval . ';' . 
-                //'WKST=' . $wkst . ';' . 
-                'BYDAY=' . $byweekday// . ',' . $startDate 
-                 );
+ 
+            //$startDate = new \DateTime("2016-03-14"); 
+            //$startDate = new \DateTime('2016-04-12 20:00:00', new \DateTimeZone($timezone));
+            //$endDate     = new \DateTime("2016-07-14"); // Optional
             
-            $transformer = new \Recurr\Transformer\ArrayTransformer();
-
-           // echo '<pre>';
-            $array = $transformer->transform($rule);
-            
+//            $myrule = 
+//                'FREQ='. $freq .
+//                ';COUNT='. $count .
+//                //';INTERVAL='. $interval .
+//                //';UNTIL=' . $endDate .  
+//                //';WKST=' $byweekday . ',' . 
+//                //';BYWEEKDAY='. $wkst . 
+//                ',';
+//            
+//            //$endDate = '20160714';
+//            echo '<pre>';
+//            print_r($myrule);
+//            
+//            $rule = new \Recurr\Rule( $myrule, $startDate, $timezone );
+//                 
+//            //$rule = new \Recurr\Rule('FREQ=WEEKLY;COUNT=5', $startDate, $timezone);
+//            
+//            $transformer = new \Recurr\Transformer\ArrayTransformer();
+//
+//            $array = $transformer->transform($rule);
+//            
+//            echo '<pre>';
+//            print_r($rule);
+    
             foreach ($array as $line) {
+                
+                $event = $eventsTable->newEntity();
             
                 if(!empty($query)){
                     //loop through patterns to
@@ -65,51 +117,95 @@ class EventsController extends AppController
 
                     $endhours = date('H', strtotime($row->resource->end_time));
                     $endmins = date('i', strtotime($row->resource->end_time));
+                    //$end = new Time($line->getEnd()->format('Y-m-d 00:00:00'));
                     $end = new Time($line->getStart()->format('Y-m-d 00:00:00'));
                     $end->modify('+' . $endhours . ' hours');
                     $end->modify('+' . $endmins . ' minutes');                                      
 
                     // event model to save
-                    $event->title = $row->employee->first_name[0] . ' ' . $row->employee->last_name . ' - ' . $row->resource->title;
-                    $event->startdate = $start;
-                    $event->enddate = $end;
-                    $event->allDay = ($row->resource_id == 9) ? 'true' : 'false';
+                    $event->title = $row->employee->first_name[0] . ' ' . $row->employee->last_name;
+                    $event->startdate = $start->format('Y-m-d H:i:s');
+                    $event->enddate = $end->format('Y-m-d H:i:s');
+                    $event->allDay = ($row->resource_id == 12) ? 'true' : 'false';
                     $event->pattern_id = $row->id;
                     $event->resource_id = $row->resource_id; 
                     $event->employee_id = $row->employee->id;
                     $event->event_type = 'pattern';
                     
                     $eventsTable->save($event);
-                }
-           }
+                }else {
+                    $this->Flash->error(__('The events could not be saved. Please, try again.'));
+                }                          
+            }
         }
-
-//echo '<pre>';
+        $this->Flash->success(__('The events have been saved.'));
+        return $this->redirect($this->referer());
+        $this->autoRender = false;
 
 }
 
 //    // sets up a feed for calendar events, consumed as json
     public function viewalleventsfeed() {
+        $events = TableRegistry::get('Events');
+        
+        //Do not use a view template.
+        //$this->layout="empty";
+        //$this->autoRender = false;
 
         $employee_id = $this->request->query('employee_id');
-        $events = $this->Events->find('all');//, $conditions);
         
-        foreach($events as $event) {
-            $allday = ($event['allDay'] == "true") ? true : false;   
-
+        $query = $events->find('all', [
+            'conditions' => ['employee_id' => $employee_id],
+            'contain' => ['Resources']
+            ]);
+   
+        foreach($query as $event) {
+            $allday = ($event['allDay'] == "true") ? true : false; 
+             
             $data[] = array(
-                'id' => $event['id'],
-                'title' => $event['title'],
-                'start' => $event['startdate'],
-                'end' => $event['enddate'],
-                'resourceId' => $event['resource_id'],
-                'resourcesTitle' => $event['Resources']['title'],
+                'id' => $event->id,
+                'title' => $event->title,
+                'start' => $event->startdate,
+                'end' => $event->enddate,
+                'resourceId' => $event->resource_id,
+                'resourcesTitle' => $event->resource->title,
                 'allDay' => $allday
             );
         }
 
         $this->set(['events' => $data, '_serialize' => 'events']);
+
     } 
+    
+ public function deleteWeekTemplate($id=null)
+    {
+        
+        $employee_id = $this->request->query('employee_id');
+        
+        $events = TableRegistry::get('Events');
+        $patterns = TableRegistry::get('Patterns');
+        
+        if ($patterns->deleteAll(['employee_id' => $employee_id], false))
+            {
+                $this->Flash->success(__('Pattern template has been deleted.'));      
+                if ($events->deleteAll(['employee_id' => $employee_id, 'event_type' => 'pattern'], false))        
+                    {
+                        $this->Flash->success(__('Events deleted.'));   
+                        return $this->redirect($this->referer());
+                    }
+                else
+                    {
+                        $this->Flash->error(__('Sorry no can do events.....'));
+                        return $this->redirect($this->referer());
+                    }
+            }
+        else
+            {                        
+                $this->Flash->error(__('Sorry no can do pattern.....'));
+                return $this->redirect($this->referer());
+            }
+
+    }    
     
 public function ajaxAdd()
 {
