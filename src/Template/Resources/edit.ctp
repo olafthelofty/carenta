@@ -44,11 +44,14 @@ $this->end();
     <legend><?= __('Edit {0}', ['Resource']) ?></legend>
     <?php
     echo $this->Form->input('title');
-    echo $this->Form->input('parentID');
-    echo $this->Form->input('duration');
+    echo $this->Form->input('heading', ['id' => 'heading']);
+    echo $this->Form->input('allDay');
+    echo $this->Form->input('night_shift');
+    echo $this->Form->input('parent_id', ['options' => $query]);
     echo $this->Form->input('start_time');
-    echo $this->Form->input('end_time');
+    echo $this->Form->input('end_time'); 
     echo $this->Form->input('event_background_color', ['class' => 'colorpick']);
+    
     ?>
 </fieldset>
 <?= $this->Form->button(__("Save")); ?>

@@ -92,24 +92,27 @@ $this->end();
 //    echo $this->Form->label('Pattern.end_time', 'End Time');
 //    echo $this->Form->time('end_time', ['interval' => 15]);
         
-    echo $this->Form->input('repeat_after', array(
-        'options' => array(
-            '1' => '1 Week',
-            '2' => '2 Weeks',
-            '3' => '3 Weeks',
-            '4' => '4 Weeks',
-            '5' => '5 Weeks',
-            '6' => '6 Weeks', 
-            '7' => '7 Weeks',
-            '8' => '8 Weeks'
-            ), 
-            'empty' => '',
-            'label' => 'Pattern Length'));        
-        
-    //echo $this->Form->input('start_date');
-    echo $this->Form->text('start_date', ['id'=>'datepicker']);
-    echo $this->Form->input('night_shift');
-    echo $this->Form->input('resource_id', ['options' => $resources]);        
+    // echo $this->Form->input('repeat_after', array(
+    //     'options' => array(
+    //         '1' => '1 Week',
+    //         '2' => '2 Weeks',
+    //         '3' => '3 Weeks',
+    //         '4' => '4 Weeks',
+    //         '5' => '5 Weeks',
+    //         '6' => '6 Weeks', 
+    //         '7' => '7 Weeks',
+    //         '8' => '8 Weeks',
+    //         '9' => '9 Weeks',
+    //         '10' => '10 Weeks', 
+    //         '11' => '11 Weeks',
+    //         '12' => '12 Weeks',
+    //         ), 
+    //         'empty' => '',
+    //         'label' => 'Pattern Length'));        
+
+    echo $this->Form->input('start_date');
+    echo $this->Form->input('resource_id', ['options' => $query]); 
+    //echo $this->Form->input('resource_id');       
     ?>
 </fieldset>
 <?= $this->Form->button(__("Save Changes")); ?>

@@ -53,4 +53,37 @@
 .table th.fit {
     white-space: nowrap;
     width: 1%;
-}    
+}
+/*Dots for color display*/
+.output span { 
+	display:inline-block;
+	width:27px; 
+	height:27px; 
+	margin:1px; 
+	border-radius:50%; 
+} 
+
+.btn-space {
+    margin-right: 5px;
+} 
+
+/*Align 'actions'  */
+.table td.myActions,
+.table th.myActions {
+	vertical-align: middle;
+	text-align: center;
+}
+
+.table th.myAlign,
+.table td.myAlign {
+	text-align: center;
+}
+
+/*Font Awesome customisation  */
+.fa-moon-o{
+    color:#000000;
+ }
+ 
+ .fa-sun-o{
+    color:#FFA500;
+ }

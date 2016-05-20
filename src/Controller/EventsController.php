@@ -12,12 +12,24 @@ use Cake\I18n\Time;
  * @property \App\Model\Table\EventsTable $Events
  */
  
- 
-// class Carbon extends \DateTime
-// {
-//     // code here
-//     echo CarbonInterval::months(3); 
-// } 
+// http://stackoverflow.com/questions/4293174/grab-all-wednesdays-in-a-given-month-in-php?lq=1
+// http://stackoverflow.com/questions/10860745/php-working-with-dates-like-every-other-week-on-tuesday
+// create DatePeriod array
+function getPatternDays($start, $dow, $step)
+{
+    $start = new \DateTime($start);
+    $start->modify($dow); // Move to first occurence
+    $end = clone $start;
+    $end->add(new \DateInterval("P12W")); // Move to n weeks from start
+    $unit = 'W';
+    $interval = new \DateInterval("P{$step}{$unit}");
+      
+    return new \DatePeriod(
+            $start,
+            $interval,
+            $end
+    );
+}
  
 class EventsController extends AppController
 {
@@ -27,22 +39,15 @@ class EventsController extends AppController
         $events = TableRegistry::get('Events');
         $employee_id = $this->request->query('employee_id');
 
-        $dowMap = array('SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA');
-
-        // pattern array
-        // $query = $patterns->find('all', [
-        //     'contain' => ['Resources', 'Employees']
-        // ]);
+        $dowMap = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
         
          if ($events->deleteAll(['employee_id' => $employee_id, 'event_type' => 'pattern'], false))        
             {
                 $this->Flash->success(__('Events deleted.'));   
-                //return $this->redirect($this->referer());
             }
         else
             {
                 $this->Flash->error(__('No previous events to remove'));
-                //return $this->redirect($this->referer());
             }
         
         
@@ -50,56 +55,21 @@ class EventsController extends AppController
             'conditions' => ['employee_id' => $employee_id],
             'contain' => ['Resources', 'Employees']
             ]);
-        
+
         foreach ($query as $row) {
             $eventsTable = TableRegistry::get('Events');
-            //$event = $eventsTable->newEntity();
-            $freq = 'WEEKLY';
-            $count = 12;
-            $interval = $row['repeat_after'];
-            $wkst = $row['day_of_week'];
             
             // day of week
-            $byweekday = $row['day_of_week'];
-            // start date
-            $startDate = new \DateTime($row['start_date']); 
-            // end date
-            $endDate = $startDate
-            
-                
-                
+            $byweekday = $dowMap[$row['day_of_week'] - 1];  
+            // start date        
+            $patternend = new \DateTime($row['start_date']);
+            // every n weeks
+            $step = $row->week_of_year;
+
+            foreach (getPatternDays($row['start_date'], $byweekday, $step) as $patternDay) {
+           
             // create date schedule array
             $timezone    = 'UTC';
- 
-            //$startDate = new \DateTime("2016-03-14"); 
-            //$startDate = new \DateTime('2016-04-12 20:00:00', new \DateTimeZone($timezone));
-            //$endDate     = new \DateTime("2016-07-14"); // Optional
-            
-//            $myrule = 
-//                'FREQ='. $freq .
-//                ';COUNT='. $count .
-//                //';INTERVAL='. $interval .
-//                //';UNTIL=' . $endDate .  
-//                //';WKST=' $byweekday . ',' . 
-//                //';BYWEEKDAY='. $wkst . 
-//                ',';
-//            
-//            //$endDate = '20160714';
-//            echo '<pre>';
-//            print_r($myrule);
-//            
-//            $rule = new \Recurr\Rule( $myrule, $startDate, $timezone );
-//                 
-//            //$rule = new \Recurr\Rule('FREQ=WEEKLY;COUNT=5', $startDate, $timezone);
-//            
-//            $transformer = new \Recurr\Transformer\ArrayTransformer();
-//
-//            $array = $transformer->transform($rule);
-//            
-//            echo '<pre>';
-//            print_r($rule);
-    
-            foreach ($array as $line) {
                 
                 $event = $eventsTable->newEntity();
             
@@ -111,14 +81,19 @@ class EventsController extends AppController
                     //format start and end dates including adding start / end hours and minutes
                     $starthours = date('H', strtotime($row->resource->start_time));
                     $startmins = date('i', strtotime($row->resource->start_time));
-                    $start = new Time($line->getStart()->format('Y-m-d 00:00:00'));
+                    $start = new Time($patternDay->format("Y-m-d"));
+       
                     $start->modify('+' . $starthours . ' hours');
                     $start->modify('+' . $startmins . ' minutes');
 
                     $endhours = date('H', strtotime($row->resource->end_time));
                     $endmins = date('i', strtotime($row->resource->end_time));
-                    //$end = new Time($line->getEnd()->format('Y-m-d 00:00:00'));
-                    $end = new Time($line->getStart()->format('Y-m-d 00:00:00'));
+                    $end = new Time($patternDay->format("Y-m-d"));
+                    
+                    if ($row->resource->night_shift == 1){
+                    $end->modify('+ 1 day');
+                    }
+                    
                     $end->modify('+' . $endhours . ' hours');
                     $end->modify('+' . $endmins . ' minutes');                                      
 
@@ -126,7 +101,7 @@ class EventsController extends AppController
                     $event->title = $row->employee->first_name[0] . ' ' . $row->employee->last_name;
                     $event->startdate = $start->format('Y-m-d H:i:s');
                     $event->enddate = $end->format('Y-m-d H:i:s');
-                    $event->allDay = ($row->resource_id == 12) ? 'true' : 'false';
+                    $event->allDay = $row->resource->allDay;                   
                     $event->pattern_id = $row->id;
                     $event->resource_id = $row->resource_id; 
                     $event->employee_id = $row->employee->id;
@@ -144,21 +119,27 @@ class EventsController extends AppController
 
 }
 
-//    // sets up a feed for calendar events, consumed as json
-    public function viewalleventsfeed() {
+//    // sets up a feed for calendar events, consumed as json, filtered by employee ID
+    public function viewfilteredeventsfeed() {
         $events = TableRegistry::get('Events');
         
         //Do not use a view template.
         //$this->layout="empty";
         //$this->autoRender = false;
-
+        
         $employee_id = $this->request->query('employee_id');
         
-        $query = $events->find('all', [
-            'conditions' => ['employee_id' => $employee_id],
-            'contain' => ['Resources']
-            ]);
-   
+        if($employee_id == 'showAll'){
+            $query = $events->find('all', [
+                'contain' => ['Resources']
+                ]);     
+        }else{
+            $query = $events->find('all', [
+                'conditions' => ['employee_id' => $employee_id],
+                'contain' => ['Resources']
+                ]);     
+        }
+
         foreach($query as $event) {
             $allday = ($event['allDay'] == "true") ? true : false; 
              
@@ -176,6 +157,39 @@ class EventsController extends AppController
         $this->set(['events' => $data, '_serialize' => 'events']);
 
     } 
+
+//    // sets up a feed for calendar events, consumed as json, filtered by employee ID
+    // public function viewalleventsfeed() {
+    //     $events = TableRegistry::get('Events');
+        
+    //     //Do not use a view template.
+    //     //$this->layout="empty";
+    //     //$this->autoRender = false;
+
+    //     $employee_id = $this->request->query('employee_id');
+            
+    //     $query = $events->find('all', [
+    //         'conditions' => [],
+    //         'contain' => ['Resources']
+    //         ]);            
+   
+    //     foreach($query as $event) {
+    //         $allday = ($event['allDay'] == "true") ? true : false; 
+             
+    //         $data[] = array(
+    //             'id' => $event->id,
+    //             'title' => $event->title,
+    //             'start' => $event->startdate,
+    //             'end' => $event->enddate,
+    //             'resourceId' => $event->resource_id,
+    //             'resourcesTitle' => $event->resource->title,
+    //             'allDay' => $allday
+    //         );
+    //     }
+
+    //     $this->set(['events' => $data, '_serialize' => 'events']);
+
+    // } 
     
  public function deleteWeekTemplate($id=null)
     {

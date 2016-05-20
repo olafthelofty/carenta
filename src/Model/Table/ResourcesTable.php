@@ -36,7 +36,18 @@ class ResourcesTable extends Table
         $this->hasMany('Patterns', [
             'foreignKey' => 'resource_id'
         ]);
-    }
+        
+        $this->hasMany('Children', [
+                'className' => 'Resources',
+                'foreignKey' => 'parent_id'
+        ]);
+          
+        $this->belongsTo('Parent', [
+                'className' => 'Resources',
+                'foreignKey' => 'parent_id'
+        ]);              
+        
+    }   
 
     /**
      * Default validation rules.
@@ -55,13 +66,13 @@ class ResourcesTable extends Table
             ->notEmpty('title');
 
         $validator
-            ->add('parentID', 'valid', ['rule' => 'numeric'])
-            ->allowEmpty('parentID');
+            ->add('parent_id', 'valid', ['rule' => 'numeric'])
+            ->allowEmpty('parent_id');
 
-        $validator
-            ->add('duration', 'valid', ['rule' => 'numeric'])
-            ->requirePresence('duration', 'create')
-            ->notEmpty('duration');
+        // $validator
+        //     ->add('duration', 'valid', ['rule' => 'numeric'])
+        //     ->requirePresence('duration', 'create')
+        //     ->notEmpty('duration');
 
         $validator
             ->add('start_time', 'valid', ['rule' => 'time'])

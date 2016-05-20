@@ -16,30 +16,55 @@ $this->start('tb_actions');
         <tr>
             <th><?= $this->Paginator->sort('id'); ?></th>
             <th><?= $this->Paginator->sort('title'); ?></th>
-            <th><?= $this->Paginator->sort('parentID'); ?></th>
-            <th><?= $this->Paginator->sort('duration'); ?></th>
             <th><?= $this->Paginator->sort('start_time'); ?></th>
             <th><?= $this->Paginator->sort('end_time'); ?></th>
-            <th><?= $this->Paginator->sort('event_background_color'); ?></th>
+            <th><?= $this->Paginator->sort('event_background_color', 'Colour'); ?></th>   
             <th class="actions"><?= __('Actions'); ?></th>
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($resources as $resource): ?>
+      
+        <?php 
+            foreach ($resources as $parent):
+                if($parent->heading){
+                    echo '<tr><td colspan="7"><b>'. $parent->title .'</b></td></tr>';
+                } else {
+                    echo '<tr><td colspan="7"></td></tr>';
+                }
+        ?>
+          
+        <?php foreach ($parent->children as $resource): ?>
+            
         <tr>
-            <td><?= $this->Number->format($resource->id) ?></td>
-            <td><?= h($resource->title) ?></td>
-            <td><?= $this->Number->format($resource->parentID) ?></td>
-            <td><?= $this->Number->format($resource->duration) ?></td>
-            <td><?= h($resource->start_time) ?></td>
-            <td><?= h($resource->end_time) ?></td>
-            <td style='background-color:<?php echo $resource->event_background_color; ?>'><?= h($resource->event_background_color) ?></td>
+            <?php if($resource->heading){ ?>
+
+                <td><?= $this->Number->format($resource->id) ?></td>
+                <td><b><?= h($resource->title) ?></b></td>           
+                <td></td>
+                <td></td> 
+                <td></td>           
+  
+            <?php }else{ ?>
+            
+                <td><?= $this->Number->format($resource->id) ?></td>
+                <td><?= h($resource->title) ?></td>
+                <td><?= h($resource->start_time->format('H:i')) ?></td>
+                <td><?= h($resource->end_time->format('H:i')) ?></td>
+                <td>
+                    <div class="output">
+                        <span style="background:<?php echo $resource->event_background_color; ?>">
+                    </div>
+                </td>
+            
+            <?php } ?>
+            
             <td class="actions">
                 <?= $this->Html->link('', ['action' => 'view', $resource->id], ['title' => __('View'), 'class' => 'btn btn-default glyphicon glyphicon-eye-open']) ?>
                 <?= $this->Html->link('', ['action' => 'edit', $resource->id], ['title' => __('Edit'), 'class' => 'btn btn-default glyphicon glyphicon-pencil']) ?>
                 <?= $this->Form->postLink('', ['action' => 'delete', $resource->id], ['confirm' => __('Are you sure you want to delete # {0}?', $resource->id), 'title' => __('Delete'), 'class' => 'btn btn-default glyphicon glyphicon-trash']) ?>
             </td>
         </tr>
+        <?php endforeach; ?>
         <?php endforeach; ?>
     </tbody>
 </table>
@@ -49,5 +74,4 @@ $this->start('tb_actions');
         <?= $this->Paginator->numbers(['before' => '', 'after' => '']) ?>
         <?= $this->Paginator->next(__('next') . ' >') ?>
     </ul>
-    <p><?= $this->Paginator->counter() ?></p>
 </div>

@@ -91,8 +91,7 @@ $this->end();
             'label' => 'Pattern Length'));        
         
     echo $this->Form->input('start_date');
-    echo $this->Form->input('night_shift');
-    echo $this->Form->input('resource_id', ['options' => $resources]);
+    echo $this->Form->input('resource_id', ['options' => $query]);
     ?>
 </fieldset>
 <?= $this->Form->button(__("Add")); ?>

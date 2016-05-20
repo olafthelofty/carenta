@@ -139,9 +139,21 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
            
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        
                         <button type="button" class="btn btn-success btn-sm" id="patternRefresh">Refresh Calendar</button>                                    
                         
+                        <?php
+                        
+                            echo $this->Html->link('Show all Events',
+                                array('controller' => 'Employees', 'action' => 'viewAll'),
+                                array(
+                                    'class' => 'btn btn-success btn-sm btn-space', 
+                                    'id' => 'viewallevents'
+                                )
+                            );
+                            
+                        ?>
+                        
+                         
                     </div>
                     <div class="panel-body">
                         <div id='calendar'></div>
@@ -154,7 +166,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                     <div class="panel-heading text-right">
                       <div class="nav"><!-- clears floated buttons -->
 
-                        <div class="btn-group pull-left" data-toggle="buttons">
+                        <div class="btn-group pull-left">
                             <h3 class="panel-title"><?php echo 'Shift Pattern for ' . $employee->full_name; ?></h3>
                         </div>
                             
@@ -170,51 +182,50 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                             </div>
                             <!-- /input-group -->
                         </div>
-                        
-                            <button 
-                                type="button" 
-                                class="btn btn-info btn-sm" 
-                                id="addWeekTemplate" 
-                                data-id=<?php echo $employee->id; ?> 
-                                data-selecteddate = "" >
-                                    Add Week Template (ajax)
-                            </button> 
-
-                            <?php
-                                if (!empty($employee->patterns)){$btnState = 'active';} else {$btnState = 'disabled';}
-
-                                echo $this->Html->link('Apply Pattern',
-                                array('controller' => 'Events', 'action' => 'patternevent', 'employee_id' => $employee->id),
-                                array(
-                                    'class' => 'btn btn-success btn-sm ' . $btnState, 
-                                    'id' => 'patternevent',
-                                    'data-id'=> $employee->id
-                                    )
-                                ); 
-                    
-                            ?>
+                       
                             <?php
 
                                 if (!empty($employee->patterns)){
 
                                     echo $this->Html->link('Delete Shift Template',
-                                    array('controller' => 'Events', 'action' => 'deleteWeekTemplate', 'employee_id' => $employee->id),
-                                    array('class' => 'btn btn-danger btn-sm active')
+                                        array('controller' => 'Events', 'action' => 'deleteWeekTemplate', 'employee_id' => $employee->id),
+                                        array(
+                                            'class' => 'btn btn-danger btn-sm active btn-space'
+                                        )
                                     ); 
-                                }else{
-                                    echo $this->Html->link('New Shift Template',
-                                    array('controller' => 'Patterns', 'action' => 'addWeekTemplate', 'employee_id' => $employee->id),
-                                    array('class' => 'btn btn-success btn-sm active')
-                                    );
+                                    
+                                if (!empty($employee->patterns)){$btnState = 'active';} else {$btnState = 'disabled';}
+
+                                echo $this->Html->link('Apply Pattern',
+                                    array('controller' => 'Events', 'action' => 'patternevent', 'employee_id' => $employee->id),
+                                    array(
+                                        'class' => 'btn btn-success btn-sm btn-space' . $btnState, 
+                                        'id' => 'patternevent',
+                                        'data-id'=> $employee->id
+                                    )
+                                ); 
+                                                                     
+                                }else{ 
+                            ?>
+                                    
+                                <button 
+                                    type="button" 
+                                    class="btn btn-info btn-sm btn-space" 
+                                    id="addWeekTemplate" 
+                                    data-id=<?php echo $employee->id; ?>
+                                    data-selecteddate = "" >
+                                        Add Week Template
+                                </button> 
+                                                                        
+                              <?php
                                 }
                             ?> 
-                        
-
+            
                       </div>
                     </div>
 
                     <?php if (!empty($employee->patterns)): ?>
-                        <table class="table table-striped">
+                        <table class="table table-striped table-bordered">
                             <thead>
                             <tr>                                
                                 <th  class="col-md-1"><?= __('Day') ?></th>
@@ -222,9 +233,9 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                 <th  class="col-md-1"><?= __('Start On') ?></th>
                                 <th  class="col-md-1"><?= __('Start Date') ?></th>
                                 <th  class="col-md-1"><?= __('Repeat After') ?></th>
-                                <th  class="col-md-1"><?= __('Night Shift') ?></th>
-                                <th  class="col-md-1"><?= __('Shift') ?></th>
-                                <th  class="col-md-1" actions"><?= __('Actions') ?></th>
+                                <th  class="col-md-1 myAlign"><?= __('Night Shift') ?></th>
+                                <th  class="col-md-2"><?= __('Shift') ?></th>
+                                <th  class="col-md-1 myActions" actions"><?= __('Actions') ?></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -232,14 +243,27 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                 <tr>
                                     
                                     <td><?php echo date('l', strtotime("Saturday +{$patterns->day_of_week} days")); ?></td>
-                                    <td><?= h($patterns->week_of_year) ?></td>
-                                    <td><?= h($patterns->starting_on) ?></td>
+                                    <td><?= h($patterns->week_of_year == 1 ? $patterns->week_of_year . ' week' : $patterns->week_of_year . ' weeks') ?></td>
+                                    <td><?= h('Week ' . $patterns->starting_on) ?></td>
                                     <td><?= h($patterns->start_date ? date('d M Y',strtotime($patterns->start_date)) : 'not set') ?></td>
                                     <td><?= h($patterns->repeat_after) ?></td>
-                                    <td><?= h($patterns->night_shift ? 'Yes' : 'No') ?></td>
-                                    <td><?= $patterns->has('resource') ? $this->Html->link($patterns->resource->title, ['controller' => 'Resources', 'action' => 'view', $patterns->resource->id]) : '' ?></td>
+                                    <td class="myAlign">
+                                        <?php echo $patterns->resource->night_shift ? 
+                                            '<i class="fa fa-moon-o" aria-hidden="true"></i>' : 
+                                            '<i class="fa fa-sun-o" aria-hidden="true"></i>'; 
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?= 
+                                            $patterns->has('resource') ? 
+                                            $this->Html->link($patterns->resource->parent->title . ' - ' . $patterns->resource->title, 
+                                                ['controller' => 'Resources', 'action' => 'view', $patterns->resource->id]
+                                            ) : 
+                                            '' 
+                                        ?>
+                                    </td>
                              
-                                    <td class="actions">
+                                    <td class="actions myActions">
                                         
                                     <!-- 
                                         <?= 

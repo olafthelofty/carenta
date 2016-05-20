@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 
 /**
  * Patterns Controller
@@ -11,7 +12,8 @@ use Cake\ORM\TableRegistry;
  */
 class PatternsController extends AppController
 {
-    // sets up a feed for calendar events, consumed as json
+
+  // sets up a feed for calendar events, consumed as json
     public function feed() {
         
         // $employee_id = $this->request->query('employee_id');
@@ -173,8 +175,6 @@ class PatternsController extends AppController
                 
         }
 
-        
- 
         while($x <= 7) {
             
             $pattern = $patternsTable->newEntity();
@@ -182,20 +182,23 @@ class PatternsController extends AppController
             $pattern->day_of_week = $x;           
             $pattern->week_of_year = 1;
             $pattern->starting_on = 1;
-            $pattern->repeat_after = 1;
+            //number of weeks for pattern
+            $pattern->repeat_after = 2;
             $pattern->night_shift = 0;
-            $pattern->resource_id = 11;
+            //default resource id for pattern template
+            $pattern->resource_id = 33;
             $pattern->start_date =  $startDate->modify('+1 day');
             //$pattern->start_date =  $startDate;
             $pattern->event_type = 'pattern';
-            
+               
             $this->Patterns->save($pattern);
             
-            $x++;
+            $x++;    
             
         }
 
         $this->Flash->success(__('The Shift template has been saved.'));
+        //return $this->redirect(['controller' => 'employees', 'action' => 'view_all']);
         //return $this->redirect($this->referer());
 
     }   
@@ -220,7 +223,19 @@ class PatternsController extends AppController
         
         $employees = $this->Patterns->Employees->find('list', ['limit' => 200]);
         $resources = $this->Patterns->Resources->find('list', ['limit' => 200]);
-        $this->set(compact('pattern', 'employees', 'resources', 'employee'));
+        
+        $resources = TableRegistry::get('Resources');
+        $resources->recover();
+        
+        $query = $resources->find('treeList', [
+                                'keyPath' => 'id',
+                                'valuePath' => 'title',
+                                'spacer' => '-'
+                            ]);
+        
+        $this->paginate['contain'] = ['ParentResources'];
+        
+        $this->set(compact('pattern', 'employees', 'resources', 'employee', 'query'));
         $this->set('_serialize', ['pattern']);
     }
 
@@ -254,6 +269,7 @@ class PatternsController extends AppController
                     
                 }else{
                     $this->Flash->error(__('Sorry no can do events.....'));
+                    return $this->redirect($url);
                 } 
 
             } else {
@@ -263,8 +279,27 @@ class PatternsController extends AppController
         }
         
         $employees = $this->Patterns->Employees->find('list', ['limit' => 200]);
-        //$resources = $this->Patterns->Resources->find('list', ['limit' => 200]);
-        $resources = $this->Patterns->Resources->find('all');
+        $resources = $this->Patterns->Resources->find('list', ['limit' => 200]);
+        
+        $query = $this->Patterns->Resources->Parent->find('all', [
+            'contain' => ['Children'],
+        ]);
+
+        $query = $query->toArray();
+        
+        // re hash $query to show parents and children in select list
+        $list = array();
+
+        foreach($query as $parent) {
+            foreach($parent->children as $children) {
+                $id = $children['id'];
+                $name = $parent['title'] . ' - ' . $children['title'];
+                $list[$id] = $name;
+            }     
+        }
+        
+        $this->set('query', $list);
+     
         $this->set(compact('pattern', 'employees', 'resources'));
         $this->set('_serialize', ['pattern']);
 

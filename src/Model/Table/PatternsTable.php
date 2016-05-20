@@ -87,9 +87,9 @@ class PatternsTable extends Table
             ->requirePresence('repeat_after', 'create')
             ->notEmpty('repeat_after');
 
-        $validator
-            ->add('night_shift', 'valid', ['rule' => 'boolean'])
-            ->allowEmpty('night_shift');
+        // $validator
+        //     ->add('night_shift', 'valid', ['rule' => 'boolean'])
+        //     ->allowEmpty('night_shift');
 
         return $validator;
     }

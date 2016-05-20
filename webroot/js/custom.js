@@ -1,25 +1,46 @@
 $(document).ready(function(){
     
-    $('.colorpick').colorpicker();
-    $('option[value=12]').attr('disabled', true);
+    //append a heading option to end of list
+    //with a null value, 
+    //set color value to null (headings don't have a color)
+    //if Heading checkbox is checked
+    $("input[name='heading']").click(function(){
+            if ($(this).is(':checked')) {      
+                $('#parent-id')
+                    .find('option')
+                    .end()
+                    .append('<option value= "">Set as Heading</option>')
+                    .val('');
+                $('#event-background-color').val('');
+                } else {
+                    var x = document.getElementById("parent-id");
+                    if (x.length > 0) {
+                        x.remove(x.length - 1);
+                    }                        
+                }                  
+    });  
+    
+    $('.colorpick').colorpicker(); 
+    
+    $('#datepicker').datepicker("setDate", "0"); //"0" for current date 
 
     $("#datepicker").datepicker({
         beforeShowDay: DisableWeekDays,
         changeMonth: true,
         changeYear: true,
-        dateFormat: "dd/mm/yy",
+        dateFormat: "yy/mm/dd",
         onSelect: function(dateText, inst) { 
             var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method
             var dateString = $.datepicker.formatDate("yy-mm-dd", dateAsObject);
-            //set data-you attribute on #addWeekTemplate button, on date change
+            //set data-selecteddate attribute on #addWeekTemplate button, on date change
             $("#addWeekTemplate").attr("data-selecteddate", dateString);        
         }
-    }).datepicker("setDate", new Date());
+    });//.datepicker("setDate", new Date());
 
     $('#btnPicker').click(function () {
         $('#datepicker').datepicker('show');
-    });
-
+    });  
+ 
 });   
 
 function DisableWeekDays(date) {
