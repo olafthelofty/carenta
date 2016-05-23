@@ -9,9 +9,13 @@ $(document).ready(function(){
         var selecteddate = $(this).attr('data-selecteddate');
         addWeekTemplate(empID, selecteddate);
     
-    });
+    });   
+ 
+    var empID = $("#annualleavesummary").attr('data-id');
+    //var selecteddate = $(this).attr('data-selecteddate');
+    getAnnualLeave(empID);      
     
-    $("#testStuff").click(function(){ testStuff();});
+    //$("#testStuff").click(function(){ testStuff();});
 
 }); 
 
@@ -57,5 +61,18 @@ function addWeekTemplate(employeeID, selecteddate){
             location.reload();
         }
     });
-
-}  
+}
+    
+function getAnnualLeave(employeeID){
+    //calculate annual leave for passed employee_id
+    $.ajax({
+        url: 'http://carenta.somervillehouse.co.uk/events/annualleave?employee_id=' + employeeID,
+        type: 'POST', // Send post data
+        success: function(data){
+            console.log(data);
+            //location.reload();
+            //alert(data);
+            $('#annualleavesummary').html(data);
+        }
+    });
+}     

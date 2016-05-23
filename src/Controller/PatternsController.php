@@ -183,7 +183,7 @@ class PatternsController extends AppController
             $pattern->week_of_year = 1;
             $pattern->starting_on = 1;
             //number of weeks for pattern
-            $pattern->repeat_after = 2;
+            $pattern->repeat_after = 12;
             $pattern->night_shift = 0;
             //default resource id for pattern template
             $pattern->resource_id = 33;

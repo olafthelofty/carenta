@@ -78,7 +78,13 @@ $(document).ready(function(){
             scrollTime: '00:00',  
             displayEventTime: false,
 
-            events: {url: 'http://carenta.somervillehouse.co.uk/events/viewfilteredeventsfeed?employee_id='+empID},
+            events: {
+                url: 'http://carenta.somervillehouse.co.uk/events/viewfilteredeventsfeed?employee_id='+empID,
+                success: function (data) {
+                    //alert(data);
+                },
+            },
+            
             // eventRender: function(event, element) { 
             //    element.find('.fc-title').append("&nbsp;" + event.resourcesTitle); 
             // }, 

@@ -139,6 +139,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
            
                 <div class="panel panel-default">
                     <div class="panel-heading">
+                           
                         <button type="button" class="btn btn-success btn-sm" id="patternRefresh">Refresh Calendar</button>                                    
                         
                         <?php
@@ -152,7 +153,15 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                             );
                             
                         ?>
-                        
+             
+                         <div class="btn btn-danger btn-sm pull-right">
+                            Annual Leave Entitlement (days) 
+                            <span 
+                                class="badge" 
+                                id="annualleavesummary" 
+                                data-id=<?php echo $employee->id; ?>>
+                            </span>
+                        </div>
                          
                     </div>
                     <div class="panel-body">
@@ -215,7 +224,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                     data-id=<?php echo $employee->id; ?>
                                     data-selecteddate = "" >
                                         Add Week Template
-                                </button> 
+                                </button>                                           
                                                                         
                               <?php
                                 }
@@ -233,7 +242,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                 <th  class="col-md-1"><?= __('Start On') ?></th>
                                 <th  class="col-md-1"><?= __('Start Date') ?></th>
                                 <th  class="col-md-1"><?= __('Repeat After') ?></th>
-                                <th  class="col-md-1 myAlign"><?= __('Night Shift') ?></th>
+                                <th  class="col-md-1 myAlign"><?= __('Day / Night') ?></th>
                                 <th  class="col-md-2"><?= __('Shift') ?></th>
                                 <th  class="col-md-1 myActions" actions"><?= __('Actions') ?></th>
                             </tr>
@@ -246,7 +255,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                     <td><?= h($patterns->week_of_year == 1 ? $patterns->week_of_year . ' week' : $patterns->week_of_year . ' weeks') ?></td>
                                     <td><?= h('Week ' . $patterns->starting_on) ?></td>
                                     <td><?= h($patterns->start_date ? date('d M Y',strtotime($patterns->start_date)) : 'not set') ?></td>
-                                    <td><?= h($patterns->repeat_after) ?></td>
+                                    <td><?= h($patterns->repeat_after == 1 ? $patterns->repeat_after . ' week' : $patterns->repeat_after . ' weeks') ?></td>
                                     <td class="myAlign">
                                         <?php echo $patterns->resource->night_shift ? 
                                             '<i class="fa fa-moon-o" aria-hidden="true"></i>' : 

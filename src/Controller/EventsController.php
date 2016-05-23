@@ -15,12 +15,15 @@ use Cake\I18n\Time;
 // http://stackoverflow.com/questions/4293174/grab-all-wednesdays-in-a-given-month-in-php?lq=1
 // http://stackoverflow.com/questions/10860745/php-working-with-dates-like-every-other-week-on-tuesday
 // create DatePeriod array
-function getPatternDays($start, $dow, $step)
+function getPatternDays($start, $dow, $step, $starting_on)
 {
+    // default pattern length
+    $repeat_after = 12;
     $start = new \DateTime($start);
+    $start->add(new \DateInterval("P{$starting_on}W")); // Offset by starting_on - 1
     $start->modify($dow); // Move to first occurence
     $end = clone $start;
-    $end->add(new \DateInterval("P12W")); // Move to n weeks from start
+    $end->add(new \DateInterval("P{$repeat_after}W")); // Move to n weeks from start
     $unit = 'W';
     $interval = new \DateInterval("P{$step}{$unit}");
       
@@ -33,6 +36,72 @@ function getPatternDays($start, $dow, $step)
  
 class EventsController extends AppController
 {
+    public function annualleave($id = null) {
+        
+        $patterns = TableRegistry::get('Patterns');
+        $events = TableRegistry::get('Events');
+        $employee_id = $this->request->query('employee_id');
+        
+        // annual leave entitlement calcs
+        $sum_of_leave_entitlement = 0;
+        $leave = 0;
+        $totalleave = 0;
+        $entitlement = 0;
+        // default pattern length
+        $repeat_after = 12;
+
+        $dowMap = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');       
+        
+        //Find all events in pattern except 'no shift' days 
+        $query = $patterns->find('all', [
+            'conditions' => ['employee_id' => $employee_id],
+            'contain' => [
+                'Resources' => function ($q) {
+                    return $q
+                        ->where(['Resources.title !=' => 'No Shift']);
+                }, 
+                'Employees']
+            ]);
+
+        foreach ($query as $row) {
+            $eventsTable = TableRegistry::get('Events');
+            
+            // day of week
+            $byweekday = $dowMap[$row['day_of_week'] - 1];  
+            // start date        
+            $patternend = new \DateTime($row['start_date']);
+            // every n weeks
+            $step = $row->week_of_year;
+            // start date offset
+            $starting_on = $row->starting_on - 1;
+            
+            $count_of_leave_entitlement = 0;
+            $leave_factor = 5.6;
+            $leave = 0;
+
+            foreach (getPatternDays($row['start_date'], $byweekday, $step, $starting_on) as $patternDay) {
+  
+                $count_of_leave_entitlement++;
+                     
+            }
+            
+            $leave = ($count_of_leave_entitlement + $leave);
+            $totalleave = $leave + $totalleave;
+            
+        }
+        
+        $entitlement = round((($totalleave * 5.6 ) / $repeat_after));
+       
+        //$entitlement = ($entitlement == 0) ? 'Annual Leave not set' :$entitlement . ' days Annual Leave';
+        
+        $this->set(['data' => $entitlement, '_serialize' => 'data']);
+
+        $this->response->body($entitlement);    
+ 
+        $this->autoRender = false;
+
+}
+
     public function patternevent($id = null) {
         
         $patterns = TableRegistry::get('Patterns');
@@ -65,8 +134,10 @@ class EventsController extends AppController
             $patternend = new \DateTime($row['start_date']);
             // every n weeks
             $step = $row->week_of_year;
-
-            foreach (getPatternDays($row['start_date'], $byweekday, $step) as $patternDay) {
+            // start date offset
+            $starting_on = $row->starting_on - 1;
+            
+            foreach (getPatternDays($row['start_date'], $byweekday, $step, $starting_on) as $patternDay) {
            
             // create date schedule array
             $timezone    = 'UTC';
@@ -76,7 +147,10 @@ class EventsController extends AppController
                 if(!empty($query)){
                     //loop through patterns to
                     //create all events based on current employee id and current pattern(s)
-                    //save to db
+                    //save to db                  
+                    
+                    //$count_of_leave_entitlement++;
+                    
                     
                     //format start and end dates including adding start / end hours and minutes
                     $starthours = date('H', strtotime($row->resource->start_time));
@@ -110,9 +184,10 @@ class EventsController extends AppController
                     $eventsTable->save($event);
                 }else {
                     $this->Flash->error(__('The events could not be saved. Please, try again.'));
-                }                          
-            }
-        }
+                }                      
+            }            
+        }   
+        
         $this->Flash->success(__('The events have been saved.'));
         return $this->redirect($this->referer());
         $this->autoRender = false;
