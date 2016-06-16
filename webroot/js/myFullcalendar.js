@@ -78,32 +78,52 @@ $(document).ready(function(){
             scrollTime: '00:00',  
             displayEventTime: false,
 
-            events: {
+            // events: {
+            //     url: 'http://carenta.somervillehouse.co.uk/events/viewfilteredeventsfeed?employee_id='+empID,
+            //     success: function (data) {
+            //         //alert(data);
+            //     },
+            // },
+
+        googleCalendarApiKey: 'AIzaSyD3HqQszOQzySlXsuLyW7Z2h3h3xuJgRNc',
+        eventSources: [
+            {
+                //get events from DB
                 url: 'http://carenta.somervillehouse.co.uk/events/viewfilteredeventsfeed?employee_id='+empID,
                 success: function (data) {
                     //alert(data);
-                },
+                    },
             },
-            
-            // eventRender: function(event, element) { 
-            //    element.find('.fc-title').append("&nbsp;" + event.resourcesTitle); 
-            // }, 
+            {
+                // add UK statutory holidays
+                googleCalendarId: 'en.uk#holiday@group.v.calendar.google.com',
+                //className: 'google-hols',
+                borderColor: 'black',
+                textColor: 'black',
+                backgroundColor: '#cbff00'
+            }
+        ],
             
             eventRender: function(event, element) {
                 element.find(".fc-title").remove();
                 element.find(".fc-time").remove();
+
+                var x = (event.resourcesParent? event.resourcesParent + ' - ' : '');
+                var y = (event.resourcesParent? event.resourcesTitle + '&nbsp;' : '');                
                 
                 element.qtip({
-                    content: event.title
+                    content: x + event.title
                 });
-                
+
                 var new_description = 
-                    '<div style="color:BLACK">'  
-                    + event.resourcesTitle + '&nbsp;'
+                    '<div style="color:BLACK">'
+                    + x  
+                    + y
                     + '<i>' + event.title + '</i>&nbsp;'
                     + '</div>'
                 ;
                 element.append(new_description);
+                
             },
             
             local: true,
@@ -111,31 +131,51 @@ $(document).ready(function(){
             
             header: {
                 left: 'today prev,next',
-                center: 'title',
-                right: 'timelineDay,timelineThreeDays,agendaFourWeeks,month,timelineMnth,agendaWeek'
+                center: 'title'//,
+                //right: 'timelineDay,basicFourWeek,agendaFourWeeks,month,timelineMnth,agendaWeek'
             },
             
-            defaultView: 'month',
+            //defaultView: 'month',
+            defaultView: 'basicFourWeek',
+            //defaultView: 'agendaWeek',
+            
+            //contentHeight: 250,
+            editable: false,
+            weekends: true,
+            theme: true,
+
+            eventOrder: "color",
+
+            //columnFormat: 'ddd Do MMM YYYY',
+            
+            //eventBackgroundColor: 'rgb(27,74,110) ',
+            //eventTextColor: 'rgb(196,241,107)',
+            
             views: {
-                timelineThreeDays: {
-                    type: 'timeline',
-                    duration: { days: 3 }
-                },
-                timelineMnth: {
-                    type: 'timelineMonth',
-                    duration: { days: 7 },
-                    buttonText: '1 week',
-                    allDay: 'Non working',
-                },
-                 agendaFourWeeks: {
-                    type: 'month',
+                basicFourWeek: {
+                    type: 'basicWeek',
                     duration: { weeks: 4 },
-                    buttonText: '4 Weeks',
-                    fixedWeekCount : true,
-                    allDayText: 'Non working',
+                    buttonText: '4 W',
+                    theme: true,
+                    //columnFormat: 'ddd Do MMM YYYY',
+                    //titleFormat: 'ddd Do MMM YYYY',
                     weekNumbers: true
+                }//,
+                // timelineMnth: {
+                //     type: 'weekList',
+                //     duration: { days: 7 },
+                //     buttonText: '1 week',
+                //     allDay: 'Non working',
+                // },
+                //  agendaFourWeeks: {
+                //     type: 'agendaDay',
+                //     duration: { weeks: 2 },
+                //     buttonText: '4 Weeks',
+                //     fixedWeekCount : true,
+                //     allDayText: 'Non working',
+                //     weekNumbers: true
                     
-                }
+                // }
             },
             resourceLabelText: 'Shift',
             
@@ -143,9 +183,9 @@ $(document).ready(function(){
                 url: 'http://carenta.somervillehouse.co.uk/resources/feed'
             },
             
-			editable: false,
+			//editable: false,
 			droppable: false, 
-			slotDuration: '00:15:00',
+			slotDuration: '00:30:00',
             //tooltip on hover
             // eventMouseover: function(event, jsEvent, view) {
             //     //var end = (event.end == null) ? event.start.format() : event.end.format();
@@ -177,6 +217,9 @@ $(document).ready(function(){
             // viewDisplay: function() { tooltip.hide() },
 
 		});
+
+       //$('#calendar').fullCalendar('addEventSource', 'https://www.googleapis.com/calendar/v3/calendars/usa__en%40holiday.calendar.google.com/events?key=AIzaSyD3HqQszOQzySlXsuLyW7Z2h3h3xuJgRNc');
+
 
 	function getFreshEvents(){
 		$.ajax({

@@ -15,45 +15,6 @@ class PatternsController extends AppController
 
   // sets up a feed for calendar events, consumed as json
     public function feed() {
-        
-        // $employee_id = $this->request->query('employee_id');
-        //     //$vars = $this->params['url'];
-        //     //$conditions = array('conditions' => array('UNIX_TIMESTAMP(start) >=' => $vars['start'], 'UNIX_TIMESTAMP(start) <=' => $vars['end']));
-        
-        //     $patterns = $this->Patterns->find('all', [
-        //         'contain' => ['Employees', 'Resources'],
-        //         'conditions' => ['Patterns.employee_id' => $employee_id]
-        //     ]);
-        
-        //     foreach($patterns as $pattern) {
-                
-        //         //get first name initial
-        //         $employee_initial = substr($pattern['employee']['first_name'], 0, 1);
-
-        //         // create data array to send to patterns/feed.json
-        //         $data[] = array(
-        //                 'id' => $pattern['id'],
-        //                 'employee_id'=> $pattern['employee_id'],
-        //                 'day_of_week' => $pattern['day_of_week'],
-        //                 'week_of_year' => $pattern['week_of_year'],
-        //                 'starting_on' => $pattern['starting_on'],
-        //                 'night_shift' => $pattern['night_shift'],
-        //                 'resource_id' => $pattern['resource_id'],
-        //                 'title' => $pattern['resource']['title'],
-        //                 'starttime' => $pattern['resource']['start_time'],
-        //                 'endtime' => $pattern['resource']['end_time'],
-        //                 'resourceTitle' => $pattern['resource']['title'],
-        //                 'employee_name' => $employee_initial . ' ' . $pattern['employee']['last_name'],
-        //                 'pattern_id'=> $pattern['id'],
-        //                 'event_type' => $pattern['event_type']
-
-        //         );
-        //     }
-        
-        //     //Do not use a view template.
-        //     //$this->layout="empty";
-
-        //     $this->set(['patterns' => $data, '_serialize' => 'patterns']);
 
     } 
 
@@ -65,7 +26,7 @@ class PatternsController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['Employees', 'Resources']
+            'contain' => ['Employees', 'Resources', 'PatternParents']
         ];
         $patterns = $this->paginate($this->Patterns);
 
@@ -97,46 +58,8 @@ class PatternsController extends AppController
      */
     
     // delete pattern template and all events for this pattern
-    public function deleteWeekTemplate($id=null)
-    {
-        
-        // $employee_id = $this->request->query('employee_id');
-        
-        // $patterns = TableRegistry::get('Patterns');
-        
-        // $results = $this->Patterns->deleteAll(
-        //     [
-        //    'employee_id' => 24
-        //    ],
-        //     false // <- single delete statement please
-        // );
-        
-        // return $this->redirect($this->referer());
-        
-        
-        
-        // $query = $this->Patterns->findAllByEmployee_id($employee_id);
-        //    // ->where(['Patterns.employee_id' => $employee_id])
-        //     //->contain(['Events']);
-        
-        // if ($this->Patterns->deleteAll([$query])) 
-        // {
-        //     $this->Flash->success(__('Pattern template has been deleted.'));
-        //     return $this->redirect($this->referer());
-        // }else{
-        //     $this->Flash->error(__('Sorry no can do.....'));
-        // }
-
-    // if ($this->Patterns->Events->deleteAll(['employee_id' => $employee])) 
-    //     {
-    //         $this->Flash->success(__('Events have been deleted.'));
-    //         return $this->redirect($this->referer());
-    //     }else{
-
-    //         $this->Flash->error(__('Sorry no can do events.....'));
-    //     }        
-            
-    //     $this->autoRender = false;
+    public function deleteWeekTemplate($id=null) {   
+       
     }
     
     public function addWeekTemplate()
@@ -145,11 +68,15 @@ class PatternsController extends AppController
         //add a 7 day template of patterns for employee
         $x = 1;
         $employee = $this->request->query('employee_id');
-        $selecteddate = $this->request->query('selecteddate');
+        //$selecteddate = $this->request->query('selecteddate');
+        
+        $selectedstartdate = $this->request->query('selectedstartdate');
+        $selectedenddate = $this->request->query('selectedenddate');
+        $patternparentid = $this->request->query('pattern_parent_id');
         
         // check if date picker date has been selected
-        if($selecteddate){
-            $startDate = \DateTime::createFromFormat('Y-m-d', $selecteddate);
+        if($selectedstartdate){
+            $startDate = \DateTime::createFromFormat('Y-m-d', $selectedstartdate);
             $startDate->format('Y-m-d');          
             $startDate->modify('-1 day');
             
@@ -190,6 +117,7 @@ class PatternsController extends AppController
             $pattern->start_date =  $startDate->modify('+1 day');
             //$pattern->start_date =  $startDate;
             $pattern->event_type = 'pattern';
+            $pattern->pattern_parent_id = $patternparentid;
                
             $this->Patterns->save($pattern);
             
@@ -224,16 +152,35 @@ class PatternsController extends AppController
         $employees = $this->Patterns->Employees->find('list', ['limit' => 200]);
         $resources = $this->Patterns->Resources->find('list', ['limit' => 200]);
         
-        $resources = TableRegistry::get('Resources');
-        $resources->recover();
+        // $resources = TableRegistry::get('Resources');
+        // $resources->recover();
         
-        $query = $resources->find('treeList', [
-                                'keyPath' => 'id',
-                                'valuePath' => 'title',
-                                'spacer' => '-'
-                            ]);
+        // $query = $resources->find('treeList', [
+        //                         'keyPath' => 'id',
+        //                         'valuePath' => 'title',
+        //                         'spacer' => '-'
+        //                     ]);
         
-        $this->paginate['contain'] = ['ParentResources'];
+        //$this->paginate['contain'] = ['ParentResources'];
+        
+        $query = $this->Patterns->Resources->Parent->find('all', [
+            'contain' => ['Children'],
+        ]);
+
+        $query = $query->toArray();
+        
+        // re hash $query to show parents and children in select list
+        $list = array();
+
+        foreach($query as $parent) {
+            foreach($parent->children as $children) {
+                $id = $children['id'];
+                $name = $parent['title'] . ' - ' . $children['title'];
+                $list[$id] = $name;
+            }     
+        }
+        
+        $this->set('query', $list);
         
         $this->set(compact('pattern', 'employees', 'resources', 'employee', 'query'));
         $this->set('_serialize', ['pattern']);

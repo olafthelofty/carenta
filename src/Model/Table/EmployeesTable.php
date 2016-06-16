@@ -64,6 +64,11 @@ class EmployeesTable extends Table
         $this->hasMany('Patterns', [
             'foreignKey' => 'employee_id'
         ]);
+        //============================
+        $this->hasMany('PatternParents', [
+            'foreignKey' => 'employee_id'
+        ]);
+        //============================
     }
 
     /**

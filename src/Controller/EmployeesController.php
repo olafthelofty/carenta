@@ -38,7 +38,21 @@ class EmployeesController extends AppController
     {
         
         $this->paginate = [
-            'contain' => ['Counties', 'ExitReasons', 'Roles', 'Nationalities', 'Ethnicities', 'ExitDestinations', 'Patterns', 'Patterns.Resources.Parent', 'Patterns.Resources.Children'],
+            'contain' => [
+                'Counties', 
+                'ExitReasons', 
+                'Roles', 
+                'Nationalities', 
+                'Ethnicities', 
+                'ExitDestinations', 
+                'Patterns', 
+                'PatternParents', //?
+                'PatternParents.Patterns',
+                'PatternParents.Patterns.Resources.Parent',
+                'PatternParents.Patterns.Resources.Children', 
+                'Patterns.Resources.Parent', //?
+                'Patterns.Resources.Children' //?
+            ],
             'limit' => 1
         ];
         $employees = $this->paginate($this->Employees);

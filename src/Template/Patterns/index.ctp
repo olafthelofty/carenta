@@ -14,6 +14,7 @@ $this->start('tb_actions');
 <table class="table table-striped" cellpadding="0" cellspacing="0">
     <thead>
         <tr>
+            <th><?= $this->Paginator->sort('pattern_parent_id'); ?></th>
             <th><?= $this->Paginator->sort('id'); ?></th>
             <th><?= $this->Paginator->sort('employee_id'); ?></th>
             <th><?= $this->Paginator->sort('day_of_week'); ?></th>
@@ -27,6 +28,7 @@ $this->start('tb_actions');
     <tbody>
         <?php foreach ($patterns as $pattern): ?>
         <tr>
+            <td><?= $this->Number->format($pattern->pattern_parent_id) ?></td>
             <td><?= $this->Number->format($pattern->id) ?></td>
             <td>
                 <?= $pattern->has('employee') ? $this->Html->link($pattern->employee->full_name, ['controller' => 'Employees', 'action' => 'view', $pattern->employee->id]) : '' ?>

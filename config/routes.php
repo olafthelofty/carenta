@@ -42,8 +42,10 @@ use Cake\Routing\Router;
  */
 
 Router::defaultRouteClass('DashedRoute');
-Router::extensions(['json']);
+Router::extensions(['json', 'xml', 'rss']);
 Router::scope('/', function ($routes) {
+// Router::scope('/', function (\Cake\Routing\RouteBuilder $routes) {
+//     $routes->extensions(['json', 'xml', 'rss']);    
 
     /**
      * Here, we are connecting '/' (base path) to a controller called 'Pages',

@@ -54,6 +54,28 @@
     white-space: nowrap;
     width: 1%;
 }
+
+/*some table tweaks on index pages*/
+#tblindex {
+    border-collapse: collapse;
+	border: 1px solid #98bf21;
+}
+#tblindex td, #tblindex th {
+	border-collapse: collapse;
+    border: 1px solid #98bf21;
+}
+
+#tblindex td {
+    vertical-align: middle;
+}
+
+#tblindex th {
+    background-color: #A7C942;
+}
+#tblindex tr.alt td {
+    background-color: #EAF2D3;
+}
+
 /*Dots for color display*/
 .output span { 
 	display:inline-block;
@@ -87,3 +109,11 @@
  .fa-sun-o{
     color:#FFA500;
  }
+ 
+ .fa-plus-square{
+
+ }
+
+.clsDatePicker {
+    z-index: 999 !important;
+}

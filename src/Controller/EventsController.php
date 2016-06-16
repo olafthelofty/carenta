@@ -36,6 +36,13 @@ function getPatternDays($start, $dow, $step, $starting_on)
  
 class EventsController extends AppController
 {
+
+    // public function initialize()
+    // {
+    //     parent::initialize();
+    //     $this->loadComponent('RequestHandler');
+    // }
+
     public function annualleave($id = null) {
         
         $patterns = TableRegistry::get('Patterns');
@@ -201,18 +208,18 @@ class EventsController extends AppController
         //Do not use a view template.
         //$this->layout="empty";
         //$this->autoRender = false;
-        
+      
         $employee_id = $this->request->query('employee_id');
         
         if($employee_id == 'showAll'){
             $query = $events->find('all', [
-                'contain' => ['Resources']
+                'contain' => ['Resources.Parent']
                 ]);     
         }else{
             $query = $events->find('all', [
                 'conditions' => ['employee_id' => $employee_id],
-                'contain' => ['Resources']
-                ]);     
+                'contain' => ['Resources.Parent']
+            ]);     
         }
 
         foreach($query as $event) {
@@ -225,6 +232,7 @@ class EventsController extends AppController
                 'end' => $event->enddate,
                 'resourceId' => $event->resource_id,
                 'resourcesTitle' => $event->resource->title,
+                'resourcesParent' => $event->resource->parent->title,
                 'allDay' => $allday
             );
         }
@@ -385,6 +393,16 @@ function eventadd($allday=null,$day=null,$month=null,$year=null,$hour=null,$min=
      */
     public function index()
     {
+        //rss check
+        if ($this->RequestHandler->isRss() ) {
+            $events = $this->Events
+                ->find()
+                ->limit(20)
+                ->order(['created' => 'desc']);
+            $this->set(compact('events'));
+        } else {
+
+
         $this->paginate = [
             'contain' => ['Resources']
         ];
@@ -392,6 +410,8 @@ function eventadd($allday=null,$day=null,$month=null,$year=null,$hour=null,$min=
 
         $this->set(compact('events'));
         $this->set('_serialize', ['events']);
+
+        }
     }
 
     /**

@@ -24,22 +24,51 @@ $(document).ready(function(){
     
     $('#datepicker').datepicker("setDate", "0"); //"0" for current date 
 
-    $("#datepicker").datepicker({
+    $("#datepickerStart_from").datepicker({ 
         beforeShowDay: DisableWeekDays,
         changeMonth: true,
         changeYear: true,
         dateFormat: "yy/mm/dd",
         onSelect: function(dateText, inst) { 
+            
+            // Check if _until exists and auto set mindate
+            if(inst.id.contains("_from")){
+                $("#"+inst.id.replace("Start_from", "End_until")).datepicker("option", "minDate", dateText);
+            }    
+            
             var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method
             var dateString = $.datepicker.formatDate("yy-mm-dd", dateAsObject);
             //set data-selecteddate attribute on #addWeekTemplate button, on date change
-            $("#addWeekTemplate").attr("data-selecteddate", dateString);        
+            //$("#addWeekTemplate").attr("data-selecteddate", dateString); 
+            $("#addWeekTemplate").attr("data-selectedstartdate", dateString); 
+            $("#newPattern").attr("data-selectedstartdate", dateString);  
+        }      
+    })//.tooltip({ show: { delay: 0 }, position: { my: "left+15 center", at: "top center" }
+    //});
+    
+    $("#datepickerEnd_until").datepicker({ 
+        beforeShowDay: DisableWeekDays,
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: "yy/mm/dd",
+        onSelect: function(dateText, inst) { 
+            
+            var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method
+            var dateString = $.datepicker.formatDate("yy-mm-dd", dateAsObject);
+            //set data-selecteddate attribute on #addWeekTemplate button, on date change
+            //$("#addWeekTemplate").attr("data-selecteddate", dateString); 
+            $("#addWeekTemplate").attr("data-selectedenddate", dateString);
+            $("#newPattern").attr("data-selectedenddate", dateString);     
         }
-    });//.datepicker("setDate", new Date());
+    })//.tooltip({ show: { delay: 0 }, position: { my: "left+15 center", at: "top center" }
+    //});  
 
-    $('#btnPicker').click(function () {
-        $('#datepicker').datepicker('show');
-    });  
+    $('#btnPickerEnd').click(function () {
+        $('#datepickerEnd_until').datepicker('show');
+    });
+    $('#btnPickerStart').click(function () {
+        $('#datepickerStart_from').datepicker('show');
+    });       
  
 });   
 

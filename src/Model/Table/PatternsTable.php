@@ -48,7 +48,13 @@ class PatternsTable extends Table
         $this->hasMany('Events', [
             'foreignKey' => 'pattern_id',
             'dependent' => true
-        ]);        
+        ]); 
+        //=================================
+        $this->belongsTo('PatternParents', [
+            'foreignKey' => 'pattern_parent_id',
+            'joinType' => 'INNER'
+        ]); 
+        //=================================             
     }
 
     /**
