@@ -32,6 +32,7 @@ $cakeDescription = 'Carenta - modern software for todays care home';
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
+
 </head>
 <body>
     <nav class="top-bar expanded" data-topbar role="navigation">

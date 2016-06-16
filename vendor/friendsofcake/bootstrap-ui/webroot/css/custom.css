@@ -1,0 +1,119 @@
+/*see http://www.jqueryajaxphp.com/fullcalendar-crud-with-jquery-and-php/*/
+
+#trash{
+		width:32px;
+		height:32px;
+		float:left;
+		padding-bottom: 15px;
+		position: relative;
+	}
+		
+	#wrap {
+		width: 1100px;
+		margin: 0 auto;
+	}
+		
+	#external-events {
+		float: left;
+		width: 150px;
+		padding: 0 10px;
+		border: 1px solid #ccc;
+		background: #eee;
+		text-align: left;
+	}
+		
+	#external-events h4 {
+		font-size: 16px;
+		margin-top: 0;
+		padding-top: 1em;
+	}
+		
+	#external-events .fc-event {
+		margin: 10px 0;
+		cursor: pointer;
+	}
+		
+	#external-events p {
+		margin: 1.5em 0;
+		font-size: 11px;
+		color: #666;
+	}
+		
+	#external-events p input {
+		margin: 0;
+		vertical-align: middle;
+	}
+
+	#calendar {
+		float: right;
+/*		width: 900px;*/
+	}
+    
+.table td.fit, 
+.table th.fit {
+    white-space: nowrap;
+    width: 1%;
+}
+
+/*some table tweaks on index pages*/
+#tblindex {
+    border-collapse: collapse;
+	border: 1px solid #98bf21;
+}
+#tblindex td, #tblindex th {
+	border-collapse: collapse;
+    border: 1px solid #98bf21;
+}
+
+#tblindex td {
+    vertical-align: middle;
+}
+
+#tblindex th {
+    background-color: #A7C942;
+}
+#tblindex tr.alt td {
+    background-color: #EAF2D3;
+}
+
+/*Dots for color display*/
+.output span { 
+	display:inline-block;
+	width:27px; 
+	height:27px; 
+	margin:1px; 
+	border-radius:50%; 
+} 
+
+.btn-space {
+    margin-right: 5px;
+} 
+
+/*Align 'actions'  */
+.table td.myActions,
+.table th.myActions {
+	vertical-align: middle;
+	text-align: center;
+}
+
+.table th.myAlign,
+.table td.myAlign {
+	text-align: center;
+}
+
+/*Font Awesome customisation  */
+.fa-moon-o{
+    color:#000000;
+ }
+ 
+ .fa-sun-o{
+    color:#FFA500;
+ }
+ 
+ .fa-plus-square{
+
+ }
+
+.clsDatePicker {
+    z-index: 999 !important;
+}
