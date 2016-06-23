@@ -127,7 +127,7 @@ class PatternsController extends AppController
 
         $this->Flash->success(__('The Shift template has been saved.'));
         //return $this->redirect(['controller' => 'employees', 'action' => 'view_all']);
-        //return $this->redirect($this->referer());
+        return $this->redirect($this->referer());
 
     }   
     

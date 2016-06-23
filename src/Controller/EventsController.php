@@ -117,14 +117,14 @@ class EventsController extends AppController
 
         $dowMap = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
         
-         if ($events->deleteAll(['employee_id' => $employee_id, 'event_type' => 'pattern'], false))        
-            {
-                $this->Flash->success(__('Events deleted.'));   
-            }
-        else
-            {
-                $this->Flash->error(__('No previous events to remove'));
-            }
+        //  if ($events->deleteAll(['employee_id' => $employee_id, 'event_type' => 'pattern'], false))        
+        //     {
+        //         $this->Flash->success(__('Events deleted.'));   
+        //     }
+        // else
+        //     {
+        //         $this->Flash->error(__('No previous events to remove'));
+        //     }
         
         
         $query = $patterns->find('all', [

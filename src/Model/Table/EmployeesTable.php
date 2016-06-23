@@ -7,6 +7,10 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
+// Slack integration, after save
+use lygav\slackbot\SlackBot;
+use ArrayObject;
+
 /**
  * Employees Model
  *
@@ -169,5 +173,35 @@ class EmployeesTable extends Table
         $rules->add($rules->existsIn(['ethnicity_id'], 'Ethnicities'));
         $rules->add($rules->existsIn(['exit_destination_id'], 'ExitDestinations'));
         return $rules;
+    }
+
+    public function afterSave(Event $event, Employee $entity, ArrayObject $options) {
+        if ($entity->created) {
+
+            $name = $entity->first_name . ' ' . $entity->last_name;
+
+        }
+    
+        //send message to Slack
+        //add use statement at head of controller: use lygav\slackbot\SlackBot;
+        //vendor code lygav php-slackbot, https://github.com/lygav/php-slackbot
+        $bot = new SlackBot("https://hooks.slack.com/services/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");
+        //$bot->text("Hi")->send();
+
+        $attachment = $bot->buildAttachment("fallback text"/* mandatory by slack */)
+            ->setPretext("New employee added:")
+            ->setText($name)
+            /*
+            Human web-safe colors automatically
+            translated into HEX equivalent
+            */
+            ->setColor("lightblue")
+            ->setAuthor("Olaf the Lofty")
+            //->addField("Name", $name, TRUE)
+           // ->addField("short field 2", "i'm also inline", TRUE)
+            ->setThumbUrl("http://carenta.somervillehouse.co.uk/img/employeeNew.png");
+
+        $bot->attach($attachment)->send();
+
     }
 }

@@ -38,7 +38,9 @@ class PatternParentsTable extends Table
         //===============================
         $this->hasMany('Patterns', [
             'foreignKey' => 'pattern_parent_id',
-            'dependent' => true
+            'dependent' => true,
+            'cascadeCallbacks' => true,
+            'exclusive' => false
         ]); 
         //===============================
     }

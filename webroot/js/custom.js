@@ -1,4 +1,31 @@
 $(document).ready(function(){
+
+$('#Autocomplete').autocomplete({
+  source:'/employees/search/',
+  select: function (event, ui){
+    alert("id=" + ui.item.value);
+
+    $.ajax({
+        url: 'http://carenta.somervillehouse.co.uk/employees/view/' + ui.item.value,
+        type: 'POST', // Send post data
+        success: function(data){
+            console.log(data);
+            //on success redirect to employee result
+            $(location).attr('href', 'http://carenta.somervillehouse.co.uk/employees/view/' + ui.item.value)
+        }
+    });
+
+    },
+  minLength: 1
+    });
+
+$("#Autocomplete").keypress(function(event){
+  var keycode = (event.keyCode ? event.keyCode : event.which);
+  if (keycode == '13') {
+    event.preventDefault();
+    event.stopPropagation();    
+  }
+});    
     
     //append a heading option to end of list
     //with a null value, 
@@ -70,7 +97,7 @@ $(document).ready(function(){
         $('#datepickerStart_from').datepicker('show');
     });       
  
-});   
+});
 
 function DisableWeekDays(date) {
  

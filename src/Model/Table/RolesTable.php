@@ -68,4 +68,5 @@ class RolesTable extends Table
         $rules->add($rules->existsIn(['role_group_id'], 'RoleGroups'));
         return $rules;
     }
+
 }

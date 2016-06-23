@@ -125,13 +125,17 @@ class PatternParentsController extends AppController
      */
     public function delete($id = null)
     {
-        $this->request->allowMethod(['post', 'delete']);
+
+        $id = $this->request->query('id');
+
+       //$this->request->allowMethod(['post', 'delete']);
         $patternParent = $this->PatternParents->get($id);
         if ($this->PatternParents->delete($patternParent)) {
             $this->Flash->success(__('The pattern parent has been deleted.'));
         } else {
             $this->Flash->error(__('The pattern parent could not be deleted. Please, try again.'));
         }
-        return $this->redirect(['action' => 'index']);
+        //return $this->redirect(['action' => 'index']);
+        return $this->redirect($this->referer());
     }
 }

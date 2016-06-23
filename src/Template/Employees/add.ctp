@@ -99,6 +99,8 @@ $this->start('tb_actions');
             echo $this->Form->input('role_id', ['options' => $roles]);
             echo $this->Form->input('nationality_id', ['options' => $nationalities]);
             echo $this->Form->input('ethnicity_id', ['options' => $ethnicities]);
+
+            echo $this->Form->input('current');
             
            // echo $this->Form->input('created');
             //echo "";

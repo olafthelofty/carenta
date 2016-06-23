@@ -190,7 +190,7 @@ if (Configure::read('debug')) {
 }
 
 //Plugin::load('Crud');
-Plugin::loadAll(); // Loads all plugins at once
+//Plugin::loadAll(); // Loads all plugins at once
 
 /**
  * Connect middleware/dispatcher filters.

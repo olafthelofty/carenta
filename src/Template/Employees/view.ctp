@@ -6,27 +6,40 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
 
 ?>
 
-<?php foreach ($employees as $employee): ?>
+<?php //foreach ($employees as $employee): ?>
 
     <div class="row">
 
         <div class="col-sm-3">
             <div class="panel panel-default">
                 <!-- Panel header -->
-                <div class="panel-heading">
-                
+                <div class="panel-heading">         
                     <div class="text-center">  
-                    <div class="paginator">
-                        <ul class="pagination">
-                            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-                    
-                            <?= $this->Paginator->next(__('next') . ' >') ?>
-                        </ul>
-                    </div>
+                        <div class="paginator">
+                            <ul class="pagination">
+                                <?= $this->Paginator->prev('< ' . __('previous')) ?>
+                        
+                                <?= $this->Paginator->next(__('next') . ' >') ?>
+                            </ul>
+                            <div class="ui-widget">
+                                <?php
+                                        echo $this->Form->create('Employees', array(
+                                            'action' => 'search'
+                                            ));
+                                        echo $this->Form->input(
+                                            'name',
+                                            array(
+                                                'id' => 'Autocomplete',
+                                                'placeholder' => 'Search Employees',
+                                                'label' => false
+                                                )); 
+                                    
+                                        echo $this->Form->end();
+                                    ?>
                         </div>
-                    
-                
-                </div>
+                    </div>
+                </div>                  
+            </div>
                 
                 <div class="table-responsive">
                     
@@ -178,27 +191,27 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
 
                         <?php
 
-                            if (!empty($employee->patterns)){
+                            // if (!empty($employee->patterns)){
 
-                                echo $this->Html->link('Delete Shift Template',
-                                    array('controller' => 'Events', 'action' => 'deleteWeekTemplate', 'employee_id' => $employee->id),
-                                    array(
-                                        'class' => 'btn btn-danger btn-sm active btn-space'
-                                    )
-                                ); 
+                            //     echo $this->Html->link('Delete Shift Template',
+                            //         array('controller' => 'Events', 'action' => 'deleteWeekTemplate', 'employee_id' => $employee->id),
+                            //         array(
+                            //             'class' => 'btn btn-danger btn-sm active btn-space'
+                            //         )
+                            //     ); 
                                 
-                            if (!empty($employee->patterns)){$btnState = 'active';} else {$btnState = 'disabled';}
+                            // if (!empty($employee->patterns)){$btnState = 'active';} else {$btnState = 'disabled';}
 
-                            echo $this->Html->link('Apply Pattern',
-                                array('controller' => 'Events', 'action' => 'patternevent', 'employee_id' => $employee->id),
-                                array(
-                                    'class' => 'btn btn-success btn-sm btn-space' . $btnState, 
-                                    'id' => 'patternevent',
-                                    'data-id'=> $employee->id
-                                )
-                            ); 
+                            // echo $this->Html->link('Apply Pattern',
+                            //     array('controller' => 'Events', 'action' => 'patternevent', 'employee_id' => $employee->id),
+                            //     array(
+                            //         'class' => 'btn btn-success btn-sm btn-space' . $btnState, 
+                            //         'id' => 'patternevent',
+                            //         'data-id'=> $employee->id
+                            //     )
+                            // ); 
                                                                     
-                            }else{ 
+                            // }else{ 
                         ?>
                                                         
                             <div class="form-inline pull-right">                  
@@ -230,23 +243,12 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                 >
                                         New Pattern
                                 </button>                                     
-                                
-                                <button 
-                                    type="button" 
-                                    class="btn btn-info btn-sm btn-space" 
-                                    id="addWeekTemplate" 
-                                    data-id=<?php echo $employee->id; ?>
-                                    data-selecteddate = ""
-                                    data-selectedstartdate = ""
-                                    data-selectedenddate = ""
-                                >
-                                        Add Week Template
-                                </button>    
+
                                 <!-- /input-group -->
                             </div>  
                                                 
                             <?php
-                            }
+                           // }
                         ?> 
 
                     </div>
@@ -267,7 +269,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                             <?php foreach ($employee->pattern_parents as $patternParents): ?>           
 
                                 <tr data-toggle="collapse" data-target=<?php echo '"#collapse'.$patternParents->id.'"'; ?> class="accordion-toggle">
-                                    <td style='text-align:center;vertical-align:middle'><button class="btn btn-success btn-xs"><span class="fa fa-plus-square fa-1x iconcolor2"></span></button></td>
+                                    <td style='text-align:center;vertical-align:middle'><button class="btn btn-success btn-xs"><span class="fa fa-angle-double-down fa-lg iconcolor2"></span></button></td>
                                     <td><?= h($patternParents->employee_id) ?></td>
                                     <td><?= h($patternParents->parent_start ? date('d M Y',strtotime($patternParents->parent_start)) : 'not set') ?></td>
                                     <td><?= h($patternParents->parent_end ? date('d M Y',strtotime($patternParents->parent_end)) : 'not set') ?></td>
@@ -284,7 +286,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                                     'pattern_parent_id' => $patternParents->id
                                                 ], 
                                                 [
-                                                    'title' => __('Create'), 'class' => 'btn btn-xs btn-default glyphicon glyphicon-plus-sign'
+                                                    'title' => __('Create'), 'class' => 'btn-space fa fa-plus-square fa-lg'
                                                 ]
                                             ) 
                                         ?>
@@ -296,16 +298,46 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                             //get current url including page number to pass to controller
                                             'url' => $this->Paginator->generateUrl(),
                                             'employee_id' => $employee->id], [
-                                                'title' => __('Edit'), 'class' => 'btn btn-xs btn-default glyphicon glyphicon-pencil']
+                                                'title' => __('Edit'), 
+                                                'class' => 'btn-space fa fa-pencil fa-lg'
+                                                ]
                                             ) 
                                         ?>
 
+                                        <?php
+
+                                            if (!empty($employee->pattern_parents)){
+
+                                                echo $this->Html->link('',
+                                                    //array('controller' => 'Events', 'action' => 'deleteWeekTemplate', 'employee_id' => $employee->id),
+                                                    array('controller' => 'PatternParents', 'action' => 'delete', 'id' => $patternParents->id),
+                                                    array(
+                                                        'class' => 'btn-space fa fa-close fa-lg',
+                                                        'title' => _('Delete')
+                                                    )
+                                                ); 
+                                                
+                                            if (!empty($employee->patterns)){$btnState = 'active';} else {$btnState = 'disabled';}
+
+                                            echo $this->Html->link('',
+                                                array('controller' => 'Events', 'action' => 'patternevent', 'employee_id' => $employee->id),
+                                                array(
+                                                    'class' => 'btn-space fa fa-check fa-lg', 
+                                                    'title' => 'Apply',
+                                                    'id' => 'patternevent',
+                                                    'data-id'=> $employee->id
+                                                )
+                                            ); 
+                                                                                    
+                                            }
+                                        ?> 
+
                                     </td>               
                                 </tr>
-                            <?php endforeach; ?>
+                            
                             <tr>
                                 <td colspan="12" class="hiddenRow">
-                                    <div class="accordian-body collapse" id=<?php echo '"collapse'.$patternParents->id.'"'; ?>> 
+                                    <div class="accordion-body collapse" id=<?php echo '"collapse'.$patternParents->id.'"'; ?>> 
                                         <div class="table-responsive">
                                             <table class="table table-hover table-bordered table-condensed table-striped">
                                                 <tr>
@@ -362,7 +394,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                     </div> 
                                 </td>
                             </tr>            
-
+<?php endforeach; ?>
                         </tbody>
                     </table>
                     <?php else: ?>
@@ -373,4 +405,4 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
         </div>
     </div>
     
-<?php endforeach; ?>
+<?php //endforeach; ?>

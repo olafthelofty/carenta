@@ -2,6 +2,10 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
+// use Cake\Routing\Router;
+// use Cake\View\Helper\UrlHelper;
 
 /**
  * Employees Controller
@@ -10,6 +14,28 @@ use App\Controller\AppController;
  */
 class EmployeesController extends AppController
 {
+
+public function search() 
+    {
+        
+        $employees = TableRegistry::get('Employees');
+
+        if ($this->request->is('ajax')) {
+            
+            $this->autoRender = false;            
+            $name = $this->request->query('term');            
+
+            $results = $employees->find('all')
+                ->where(['Employees.first_name LIKE ' => '%' . $name . '%'])
+                ->orWhere(['Employees.last_name LIKE ' => '%' . $name . '%']);
+            
+            $resultArr = array();
+            foreach($results as $result) {
+               $resultArr[] = ['label' =>$result['first_name'] . ' ' . $result['last_name'], 'value' => $result['id'] ];
+            }
+            echo json_encode($resultArr);              
+    }
+}
 
     /**
      * Index method
@@ -36,29 +62,54 @@ class EmployeesController extends AppController
      */
     public function view($id = null)
     {
-        
-        $this->paginate = [
-            'contain' => [
-                'Counties', 
-                'ExitReasons', 
-                'Roles', 
-                'Nationalities', 
-                'Ethnicities', 
-                'ExitDestinations', 
-                'Patterns', 
-                'PatternParents', //?
-                'PatternParents.Patterns',
-                'PatternParents.Patterns.Resources.Parent',
-                'PatternParents.Patterns.Resources.Children', 
-                'Patterns.Resources.Parent', //?
-                'Patterns.Resources.Children' //?
-            ],
-            'limit' => 1
-        ];
-        $employees = $this->paginate($this->Employees);
 
-        $this->set(compact('employees'));
-        $this->set('_serialize', ['employees']);        
+        // if(!$this->request->query('id')) {$employee_id = 22;} else {
+        //     $employee_id = $this->request->query('ide');
+        // 
+
+        if($this->request->query('id')) {
+            $id = $this->request->query('id');
+            $search = true;
+            //$id = 23;
+            }
+
+        //$id = 24;
+
+        $employee = $this->Employees->get($id, [
+                'contain' => [
+                    'Counties', 
+                    'ExitReasons', 
+                    'Roles', 
+                    'Nationalities', 
+                    'Ethnicities', 
+                    'ExitDestinations', 
+                    'Patterns', 
+                    'PatternParents', //?
+                    'PatternParents.Patterns',
+                    'PatternParents.Patterns.Events',
+                    'PatternParents.Patterns.Resources.Parent',
+                    'PatternParents.Patterns.Resources.Children', 
+                    'Patterns.Resources.Parent', //?
+                    'Patterns.Resources.Children' //?
+                ]
+            ]);
+
+        $this->set(compact('employee'));
+        $this->set('_serialize', ['employee']); 
+
+// if($this->search == true) {
+//     echo 'fff';
+//         $this->redirect(array('action' => "view", $id));
+// }
+
+        // $this->redirect([
+        //     'controller' => 'Employees', 
+        //     'action' => 'view',
+        //     $id
+            
+  
+        // ]);
+
     }
     
     public function viewAll($id = null)

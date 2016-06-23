@@ -64,6 +64,7 @@ class RolesController extends AppController
         $roleGroups = $this->Roles->RoleGroups->find('list', ['limit' => 200]);
         $this->set(compact('role', 'roleGroups'));
         $this->set('_serialize', ['role']);
+
     }
 
     /**
