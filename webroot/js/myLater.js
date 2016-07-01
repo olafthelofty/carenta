@@ -19,7 +19,6 @@ $(document).ready(function(){
     $("#newPattern").click(function(){ 
          
         var empID = $(this).attr('data-id');
-        //var selecteddate = $(this).attr('data-selecteddate');
         
         var selectedstartdate = $(this).attr('data-selectedstartdate');
         var selectedenddate = $(this).attr('data-selectedenddate');

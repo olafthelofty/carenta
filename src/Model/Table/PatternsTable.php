@@ -48,8 +48,8 @@ class PatternsTable extends Table
         $this->hasMany('Events', [
             'foreignKey' => 'pattern_id',
             'dependent' => true,
-            'cascadeCallbacks' => true,
-            'exclusive' => false
+            'cascadeCallbacks' => true//,
+            //'exclusive' => false
         ]); 
         //=================================
         $this->belongsTo('PatternParents', [

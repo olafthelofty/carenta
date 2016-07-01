@@ -3,7 +3,7 @@ $(document).ready(function(){
 $('#Autocomplete').autocomplete({
   source:'/employees/search/',
   select: function (event, ui){
-    alert("id=" + ui.item.value);
+    //alert("id=" + ui.item.value);
 
     $.ajax({
         url: 'http://carenta.somervillehouse.co.uk/employees/view/' + ui.item.value,
@@ -59,7 +59,7 @@ $("#Autocomplete").keypress(function(event){
         onSelect: function(dateText, inst) { 
             
             // Check if _until exists and auto set mindate
-            if(inst.id.contains("_from")){
+            if($("inst.id:contains(_from)")){
                 $("#"+inst.id.replace("Start_from", "End_until")).datepicker("option", "minDate", dateText);
             }    
             

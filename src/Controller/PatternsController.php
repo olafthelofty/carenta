@@ -208,16 +208,16 @@ class PatternsController extends AppController
             if ($this->Patterns->save($pattern)) 
             {        
                 $this->Flash->success(__('The pattern has been saved.'));
-                if ($this->Patterns->Events->deleteAll(['pattern_id' => $id]))
+            //    if ($this->Patterns->Events->deleteAll(['pattern_id' => $id]))
                 
-                {
-                    $this->Flash->success(__('Events have been deleted.'));
+            //    {
+            //        $this->Flash->success(__('Events have been deleted.'));
                     return $this->redirect($url);
                     
-                }else{
-                    $this->Flash->error(__('Sorry no can do events.....'));
-                    return $this->redirect($url);
-                } 
+            //    }else{
+            //        $this->Flash->error(__('Sorry no can do events.....'));
+            //        return $this->redirect($url);
+            //    } 
 
             } else {
                 $this->Flash->error(__('The pattern could not be saved. Please, try again.'));

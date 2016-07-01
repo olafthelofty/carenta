@@ -16,7 +16,7 @@ $this->extend('../Layout/TwitterBootstrap/calendarpublic');
                     <?php
                     
                         echo $this->Html->link('Show Filtered Events',
-                            array('controller' => 'Employees', 'action' => 'view'),
+                            array('controller' => 'Employees', 'action' => 'view', 22),
                             array(
                                 'class' => 'btn btn-success btn-sm btn-space', 
                                 'id' => 'viewfilteredevents'

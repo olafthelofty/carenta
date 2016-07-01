@@ -31,11 +31,20 @@ class EventsTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->addBehavior('CounterCache', [
+            'Patterns' => [
+                'event_count' => [
+                    'conditions' => ['Events.allDay' => false]
+                ]
+            ]
+        ]);
+
         $this->belongsTo('Resources', [
             'foreignKey' => 'resource_id'
         ]);
         $this->belongsTo('Patterns', [
-            'foreignKey' => 'pattern_id'//,
+            'foreignKey' => 'pattern_id',
+            'joinType' => 'INNER'
             //'dependent' => true
         ]);        
     }

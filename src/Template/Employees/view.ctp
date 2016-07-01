@@ -155,7 +155,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                     <?php
                     
                         echo $this->Html->link('Show all Events',
-                            array('controller' => 'Employees', 'action' => 'viewAll'),
+                            array('controller' => 'Employees', 'action' => 'viewAll', 'fred' => true),
                             array(
                                 'class' => 'btn btn-success btn-sm btn-space', 
                                 'id' => 'viewallevents'
@@ -258,21 +258,23 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                     <table id="tblindex" class="table table-hover table-bordered table-condensed table-striped table-responsive">
                         <thead>
                             <tr>
-                                    <th>&nbsp;</th>
-                                    <th class="col-md-3"><?php echo $this->Paginator->sort('ID'); ?></th>
-                                    <th class="col-md-3"><?php echo $this->Paginator->sort('Starts On'); ?></th>
-                                    <th class="col-md-3"><?php echo $this->Paginator->sort('Ends On'); ?></th>
-                                    <th class="col-md-2 myActions"><?php echo __('Actions'); ?></th>
+                                    <th class="col-md-1">&nbsp;</th>
+                                    <th class="col-md-1"><?php echo $this->Paginator->sort('ID'); ?></th>
+                                    <th class="col-md-2"><?php echo $this->Paginator->sort('Starts On'); ?></th>
+                                    <th class="col-md-2"><?php echo $this->Paginator->sort('Ends On'); ?></th>
+                                    <th class="col-md-2"><?php echo $this->Paginator->sort('Leave Factor'); ?></th>
+                                    <th class="col-md-3 myActions"><?php echo __('Actions'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($employee->pattern_parents as $patternParents): ?>           
 
                                 <tr data-toggle="collapse" data-target=<?php echo '"#collapse'.$patternParents->id.'"'; ?> class="accordion-toggle">
-                                    <td style='text-align:center;vertical-align:middle'><button class="btn btn-success btn-xs"><span class="fa fa-angle-double-down fa-lg iconcolor2"></span></button></td>
+                                    <td style='text-align:center;vertical-align:middle'><button class="btn btn-success btn-xs"><span class="fa fa-angle-double-down fa-lg"></span></button></td>
                                     <td><?= h($patternParents->employee_id) ?></td>
                                     <td><?= h($patternParents->parent_start ? date('d M Y',strtotime($patternParents->parent_start)) : 'not set') ?></td>
                                     <td><?= h($patternParents->parent_end ? date('d M Y',strtotime($patternParents->parent_end)) : 'not set') ?></td>
+                                    <td><?= h($patternParents->leave_factor) ?></td>
 
                                     <td class="actions myActions">
                                         
@@ -286,7 +288,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                                     'pattern_parent_id' => $patternParents->id
                                                 ], 
                                                 [
-                                                    'title' => __('Create'), 'class' => 'btn-space fa fa-plus-square fa-lg'
+                                                    'title' => __('Create'), 'class' => 'iconcolor2 btn-space fa fa-plus-square fa-lg'
                                                 ]
                                             ) 
                                         ?>
@@ -305,29 +307,43 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                         ?>
 
                                         <?php
-
-                                            if (!empty($employee->pattern_parents)){
-
-                                                echo $this->Html->link('',
-                                                    //array('controller' => 'Events', 'action' => 'deleteWeekTemplate', 'employee_id' => $employee->id),
-                                                    array('controller' => 'PatternParents', 'action' => 'delete', 'id' => $patternParents->id),
-                                                    array(
-                                                        'class' => 'btn-space fa fa-close fa-lg',
-                                                        'title' => _('Delete')
-                                                    )
-                                                ); 
                                                 
                                             if (!empty($employee->patterns)){$btnState = 'active';} else {$btnState = 'disabled';}
 
                                             echo $this->Html->link('',
-                                                array('controller' => 'Events', 'action' => 'patternevent', 'employee_id' => $employee->id),
                                                 array(
-                                                    'class' => 'btn-space fa fa-check fa-lg', 
+                                                    'controller' => 'Events', 
+                                                    'action' => 'patternevent', 
+                                                    'employee_id' => $employee->id, 
+                                                    'patternparentid' => $patternParents->id,
+                                                    'patternSun' => $patternParents->patterns[0]->id,
+                                                    'patternMon' => $patternParents->patterns[1]->id,
+                                                    'patternTue' => $patternParents->patterns[2]->id,
+                                                    'patternWed' => $patternParents->patterns[3]->id,
+                                                    'patternThu' => $patternParents->patterns[4]->id,
+                                                    'patternFri' => $patternParents->patterns[5]->id,
+                                                    'patternSat' => $patternParents->patterns[6]->id                                                    
+                                                ),
+                                                array(
+                                                    'class' => 'iconcolor3 btn-space4x fa fa-check fa-lg', 
                                                     'title' => 'Apply',
                                                     'id' => 'patternevent',
                                                     'data-id'=> $employee->id
                                                 )
                                             ); 
+
+                                            if (!empty($employee->pattern_parents)){
+
+                                                echo $this->Html->link('',
+                                                    [
+                                                        'controller' => 'PatternParents', 'action' => 'delete', 'id' => $patternParents->id
+                                                    ],
+                                                    [
+                                                        'class' => 'iconcolor4 btn-space fa fa-close fa-lg',
+                                                        'title' => __('Delete'),
+                                                        'confirm' => __('Are you sure you want to delete this pattern id: #{0}?',  $patternParents->id)
+                                                    ]
+                                                );                                            
                                                                                     
                                             }
                                         ?> 

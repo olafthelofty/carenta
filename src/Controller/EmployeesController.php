@@ -97,19 +97,6 @@ public function search()
         $this->set(compact('employee'));
         $this->set('_serialize', ['employee']); 
 
-// if($this->search == true) {
-//     echo 'fff';
-//         $this->redirect(array('action' => "view", $id));
-// }
-
-        // $this->redirect([
-        //     'controller' => 'Employees', 
-        //     'action' => 'view',
-        //     $id
-            
-  
-        // ]);
-
     }
     
     public function viewAll($id = null)
@@ -125,7 +112,12 @@ public function search()
         $employees = $this->paginate($this->Employees);
 
         $this->set(compact('employees'));
-        $this->set('_serialize', ['employees']);        
+        $this->set('_serialize', ['employees']); 
+
+        // if($this->request->query('fred')) {
+        //     return $this->redirect($this->referer());
+        //     }         
+
     }    
 
     /**

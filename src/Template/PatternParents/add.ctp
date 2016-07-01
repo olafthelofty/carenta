@@ -26,6 +26,7 @@ $this->end();
     echo $this->Form->input('parent_start');
     echo $this->Form->input('parent_end');
     echo $this->Form->input('employee_id', ['options' => $employees]);
+    echo $this->Form->input('leave_factor');
     ?>
 </fieldset>
 <?= $this->Form->button(__("Add")); ?>

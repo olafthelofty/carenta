@@ -43,8 +43,91 @@ class EventsController extends AppController
     //     $this->loadComponent('RequestHandler');
     // }
 
+//  public function annualleave($id = null) {
+        
+//         $patternParentsTable = TableRegistry::get('PatternParents');
+//         //$patterns = TableRegistry::get('Patterns');
+//         //$events = TableRegistry::get('Events');
+//         $employee_id = $this->request->query('employee_id');
+        
+//         // // annual leave entitlement calcs
+//         // $sum_of_leave_entitlement = 0;
+//         // $leave = 0;
+//         // $totalleave = 0;
+//         // $entitlement = 0;
+//         // // default pattern length
+//         // $repeat_after = 12;
+
+//         // $dowMap = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');       
+        
+//         //Find all events in pattern except 'no shift' days 
+
+//          //$eventsCount = $this->PatternParents->Patterns->Events->find('count');
+
+//          $query = $patternParentsTable->find()->contain([ 
+//             'Patterns.Events'
+//             ]);
+//         $number = $query->count();
+
+//         print_r($number);
+
+//         debug($query->toArray());
+
+//         // $query = $patterns->find('all', [
+//         //     'conditions' => ['employee_id' => $employee_id],
+//         //     'contain' => [
+//         //         'Resources' => function ($q) {
+//         //             return $q
+//         //                 ->where(['Resources.title !=' => 'No Shift']);
+//         //         }, 
+//         //         'Employees']
+//         //     ]);
+
+//         // foreach ($query as $fred) {
+//         //    foreach ($fred as $row) { 
+//         //     $eventsTable = TableRegistry::get('Events');
+            
+//         //     // day of week
+//         //     $byweekday = $dowMap[$row['day_of_week'] - 1];  
+//         //     // start date        
+//         //     $patternend = new \DateTime($row['start_date']);
+//         //     // every n weeks
+//         //     $step = $row->week_of_year;
+//         //     // start date offset
+//         //     $starting_on = $row->starting_on - 1;
+            
+//         //     $count_of_leave_entitlement = 0;
+//         //     $leave_factor = 5.6;
+//         //     $leave = 0;
+
+//         //     foreach (getPatternDays($row['start_date'], $byweekday, $step, $starting_on) as $patternDay) {
+  
+//         //         $count_of_leave_entitlement++;
+                     
+//         //     }
+            
+//         //     $leave = ($count_of_leave_entitlement + $leave);
+//         //     $totalleave = $leave + $totalleave;
+            
+//         // }
+//         // }
+        
+//         // $entitlement = round((($totalleave * 5.6 ) / $repeat_after));
+       
+//         // //$entitlement = ($entitlement == 0) ? 'Annual Leave not set' :$entitlement . ' days Annual Leave';
+        
+//         // $this->set(['data' => $entitlement, '_serialize' => 'data']);
+        
+
+//         // $this->response->body($entitlement);    
+ 
+//         // $this->autoRender = true;
+
+// }
+
     public function annualleave($id = null) {
         
+        $patternParentsTable = TableRegistry::get('PatternParents');
         $patterns = TableRegistry::get('Patterns');
         $events = TableRegistry::get('Events');
         $employee_id = $this->request->query('employee_id');
@@ -60,17 +143,30 @@ class EventsController extends AppController
         $dowMap = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');       
         
         //Find all events in pattern except 'no shift' days 
-        $query = $patterns->find('all', [
+        $query = $patternParentsTable->find('all', [
             'conditions' => ['employee_id' => $employee_id],
             'contain' => [
-                'Resources' => function ($q) {
+                'Patterns',
+                'Patterns.Resources' => function ($q) {
                     return $q
                         ->where(['Resources.title !=' => 'No Shift']);
                 }, 
-                'Employees']
+                'Patterns.Employees']
             ]);
 
-        foreach ($query as $row) {
+            //debug($query->toArray());
+        // $query = $patterns->find('all', [
+        //     'conditions' => ['employee_id' => $employee_id],
+        //     'contain' => [
+        //         'Resources' => function ($q) {
+        //             return $q
+        //                 ->where(['Resources.title !=' => 'No Shift']);
+        //         }, 
+        //         'Employees']
+        //     ]);
+
+        foreach ($query as $fred) {
+           foreach ($fred as $row) { 
             $eventsTable = TableRegistry::get('Events');
             
             // day of week
@@ -94,7 +190,8 @@ class EventsController extends AppController
             
             $leave = ($count_of_leave_entitlement + $leave);
             $totalleave = $leave + $totalleave;
-            
+
+        }
         }
         
         $entitlement = round((($totalleave * 5.6 ) / $repeat_after));
@@ -102,10 +199,11 @@ class EventsController extends AppController
         //$entitlement = ($entitlement == 0) ? 'Annual Leave not set' :$entitlement . ' days Annual Leave';
         
         $this->set(['data' => $entitlement, '_serialize' => 'data']);
+        
 
         $this->response->body($entitlement);    
  
-        $this->autoRender = false;
+        $this->autoRender = true;
 
 }
 
@@ -114,25 +212,51 @@ class EventsController extends AppController
         $patterns = TableRegistry::get('Patterns');
         $events = TableRegistry::get('Events');
         $employee_id = $this->request->query('employee_id');
+        $patternparent_id = $this->request->query('patternparentid');
+
+        $pattern_sun = $this->request->query('patternSun');
+        $pattern_mon = $this->request->query('patternMon');
+        $pattern_tue = $this->request->query('patternTue');
+        $pattern_wed = $this->request->query('patternWed');
+        $pattern_thu = $this->request->query('patternThu');
+        $pattern_fri = $this->request->query('patternFri');
+        $pattern_sat = $this->request->query('patternSat');
+
+        $pattern_id = $this->request->query('id');
+
 
         $dowMap = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
-        
-        //  if ($events->deleteAll(['employee_id' => $employee_id, 'event_type' => 'pattern'], false))        
-        //     {
-        //         $this->Flash->success(__('Events deleted.'));   
-        //     }
-        // else
-        //     {
-        //         $this->Flash->error(__('No previous events to remove'));
-        //     }
-        
+
+        // delete exisitng events for current patternParent
+        // prior to creating events
+        $events_to_delete = [
+
+                $pattern_sun,
+                $pattern_mon,
+                $pattern_tue,
+                $pattern_wed, 
+                $pattern_thu,
+                $pattern_fri,
+                $pattern_sat  
+        ]; 
+
+        foreach ($events_to_delete as $key => $value)  {
+            $events->deleteAll(
+                ['pattern_id' => $value]
+            );
+        }    
         
         $query = $patterns->find('all', [
-            'conditions' => ['employee_id' => $employee_id],
+            //'conditions' => ['employee_id' => $employee_id],
+            'conditions' => ['pattern_parent_id' => $patternparent_id],
+            //'conditions' => ['Patterns.id' => 2787],
             'contain' => ['Resources', 'Employees']
             ]);
 
         foreach ($query as $row) {
+
+            //debug($row->toArray());
+
             $eventsTable = TableRegistry::get('Events');
             
             // day of week
@@ -157,8 +281,7 @@ class EventsController extends AppController
                     //save to db                  
                     
                     //$count_of_leave_entitlement++;
-                    
-                    
+                                     
                     //format start and end dates including adding start / end hours and minutes
                     $starthours = date('H', strtotime($row->resource->start_time));
                     $startmins = date('i', strtotime($row->resource->start_time));
@@ -193,7 +316,8 @@ class EventsController extends AppController
                     $this->Flash->error(__('The events could not be saved. Please, try again.'));
                 }                      
             }            
-        }   
+        }
+
         
         $this->Flash->success(__('The events have been saved.'));
         return $this->redirect($this->referer());

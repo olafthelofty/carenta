@@ -16,6 +16,7 @@ $this->start('tb_actions');
             <th><?= $this->Paginator->sort('parent_start'); ?></th>
             <th><?= $this->Paginator->sort('parent_end'); ?></th>
             <th><?= $this->Paginator->sort('employee_id'); ?></th>
+            <th><?= $this->Paginator->sort('leave_factor'); ?></th>
             <th><?= $this->Paginator->sort('created'); ?></th>
             <th><?= $this->Paginator->sort('modified'); ?></th>
             <th class="actions"><?= __('Actions'); ?></th>
@@ -30,6 +31,7 @@ $this->start('tb_actions');
             <td>
                 <?= $patternParent->has('employee') ? $this->Html->link($patternParent->employee->full_name, ['controller' => 'Employees', 'action' => 'view', $patternParent->employee->id]) : '' ?>
             </td>
+            <td><?= h($patternParent->leave_factor) ?></td>
             <td><?= h($patternParent->created) ?></td>
             <td><?= h($patternParent->modified) ?></td>
             <td class="actions">

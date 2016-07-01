@@ -87,7 +87,11 @@
 
 .btn-space {
     margin-right: 5px;
-} 
+}
+
+.btn-space4x {
+    margin-right: 20px;
+}  
 
 /*Align 'actions'  */
 .table td.myActions,
@@ -117,3 +121,9 @@
 .clsDatePicker {
     z-index: 999 !important;
 }
+
+.iconcolor1 {color:blueviolet}
+.iconcolor2 {color:orange}
+.iconcolor3 {color:green}
+.iconcolor4 {color:red}
+.iconcolor5 {color:black}

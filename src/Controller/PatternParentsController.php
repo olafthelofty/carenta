@@ -28,7 +28,7 @@ class PatternParentsController extends AppController
             $patternParent->employee_id = $employee_id;
                   
             if($this->PatternParents->save($patternParent)){
-                  $this->Flash->success(__('The pattern parent has been sasssved.'));
+                  $this->Flash->success(__('The pattern parent has been saved.'));
             }else{
              $this->Flash->error(__('The pattern parent could not be saved. Please, try again.'));
            }
@@ -137,5 +137,6 @@ class PatternParentsController extends AppController
         }
         //return $this->redirect(['action' => 'index']);
         return $this->redirect($this->referer());
+        $this->autoRender = false;
     }
 }

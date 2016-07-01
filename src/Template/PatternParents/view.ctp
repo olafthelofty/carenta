@@ -49,6 +49,10 @@ $this->end();
             <td><?= h($patternParent->parent_end) ?></td>
         </tr>
         <tr>
+            <td><?= __('Leave Factor') ?></td>
+            <td><?= h($patternParent->leave_factor) ?></td>
+        </tr>        
+        <tr>
             <td><?= __('Created') ?></td>
             <td><?= h($patternParent->created) ?></td>
         </tr>
