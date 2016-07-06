@@ -15,15 +15,16 @@ use Cake\I18n\Time;
 // http://stackoverflow.com/questions/4293174/grab-all-wednesdays-in-a-given-month-in-php?lq=1
 // http://stackoverflow.com/questions/10860745/php-working-with-dates-like-every-other-week-on-tuesday
 // create DatePeriod array
-function getPatternDays($start, $dow, $step, $starting_on)
+function getPatternDays($start, $dow, $step, $starting_on, $end)
 {
     // default pattern length
     $repeat_after = 12;
     $start = new \DateTime($start);
     $start->add(new \DateInterval("P{$starting_on}W")); // Offset by starting_on - 1
     $start->modify($dow); // Move to first occurence
-    $end = clone $start;
-    $end->add(new \DateInterval("P{$repeat_after}W")); // Move to n weeks from start
+    //$end = clone $start;
+    //$end->add(new \DateInterval("P{$repeat_after}W")); // Move to n weeks from start
+    $end = new \DateTime($end);
     $unit = 'W';
     $interval = new \DateInterval("P{$step}{$unit}");
       
@@ -126,51 +127,43 @@ class EventsController extends AppController
 // }
 
     public function annualleave($id = null) {
+        //calculates annual leave entitlement for each pattern
+        //based on pattern length
         
         $patternParentsTable = TableRegistry::get('PatternParents');
         $patterns = TableRegistry::get('Patterns');
         $events = TableRegistry::get('Events');
         $employee_id = $this->request->query('employee_id');
-        
+        $patternparentid = $this->request->query('patternparentid');
+
         // annual leave entitlement calcs
         $sum_of_leave_entitlement = 0;
         $leave = 0;
         $totalleave = 0;
         $entitlement = 0;
         // default pattern length
-        $repeat_after = 12;
+        $repeat_after = 0;
 
         $dowMap = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');       
         
         //Find all events in pattern except 'no shift' days 
-        $query = $patternParentsTable->find('all', [
-            'conditions' => ['employee_id' => $employee_id],
-            'contain' => [
-                'Patterns',
-                'Patterns.Resources' => function ($q) {
-                    return $q
-                        ->where(['Resources.title !=' => 'No Shift']);
-                }, 
-                'Patterns.Employees']
-            ]);
+        $query = $patterns->find();
+        $query->where(['pattern_parent_id' => $patternparentid, 'resource_id !=' => 50]);
+        $query->contain('Events');
 
-            //debug($query->toArray());
-        // $query = $patterns->find('all', [
-        //     'conditions' => ['employee_id' => $employee_id],
-        //     'contain' => [
-        //         'Resources' => function ($q) {
-        //             return $q
-        //                 ->where(['Resources.title !=' => 'No Shift']);
-        //         }, 
-        //         'Employees']
-        //     ]);
+        // find number of days in entire pattern
+        $totalday = $patternParentsTable->find()->where(['id' => $patternparentid])->first();
 
-        foreach ($query as $fred) {
-           foreach ($fred as $row) { 
-            $eventsTable = TableRegistry::get('Events');
-            
+        $date1 = new \DateTime($totalday->parent_start);
+        $date2 = new \DateTime($totalday->parent_end);
+
+        $totalpatterndays = $date2->diff($date1)->format("%a");
+        $totalpatternweeks = $totalpatterndays / 7;
+
+        foreach ($query as $row) {
+
             // day of week
-            $byweekday = $dowMap[$row['day_of_week'] - 1];  
+            $byweekday = $dowMap[$row['day_of_week'] -1];  
             // start date        
             $patternend = new \DateTime($row['start_date']);
             // every n weeks
@@ -182,28 +175,22 @@ class EventsController extends AppController
             $leave_factor = 5.6;
             $leave = 0;
 
-            foreach (getPatternDays($row['start_date'], $byweekday, $step, $starting_on) as $patternDay) {
+            foreach (getPatternDays($row['start_date'], $byweekday, $step, $starting_on, $row['end_date']) as $patternDay) {
   
                 $count_of_leave_entitlement++;
                      
             }
             
             $leave = ($count_of_leave_entitlement + $leave);
-            $totalleave = $leave + $totalleave;
+            $totalleave = ($leave + $totalleave);
+
+            $entitlement = round((($totalleave * 5.6 ) / $totalpatternweeks));
 
         }
-        }
-        
-        $entitlement = round((($totalleave * 5.6 ) / $repeat_after));
-       
-        //$entitlement = ($entitlement == 0) ? 'Annual Leave not set' :$entitlement . ' days Annual Leave';
-        
-        $this->set(['data' => $entitlement, '_serialize' => 'data']);
-        
-
+         
+        $this->set(['data' => $entitlement, '_serialize' => 'data']);    
         $this->response->body($entitlement);    
- 
-        $this->autoRender = true;
+        $this->autoRender = false;
 
 }
 
@@ -268,7 +255,7 @@ class EventsController extends AppController
             // start date offset
             $starting_on = $row->starting_on - 1;
             
-            foreach (getPatternDays($row['start_date'], $byweekday, $step, $starting_on) as $patternDay) {
+            foreach (getPatternDays($row['start_date'], $byweekday, $step, $starting_on, $row['end_date']) as $patternDay) {
            
             // create date schedule array
             $timezone    = 'UTC';
@@ -310,6 +297,7 @@ class EventsController extends AppController
                     $event->resource_id = $row->resource_id; 
                     $event->employee_id = $row->employee->id;
                     $event->event_type = 'pattern';
+                    $event->patternparentid = $patternparent_id;
                     
                     $eventsTable->save($event);
                 }else {
@@ -357,7 +345,8 @@ class EventsController extends AppController
                 'resourceId' => $event->resource_id,
                 'resourcesTitle' => $event->resource->title,
                 'resourcesParent' => $event->resource->parent->title,
-                'allDay' => $allday
+                'allDay' => $allday,
+                'patternparentid' => $event->patternparentid
             );
         }
 

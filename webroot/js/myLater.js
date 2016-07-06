@@ -27,9 +27,18 @@ $(document).ready(function(){
     
     });        
  
-    var empID = $("#annualleavesummary").attr('data-id');
-    //var selecteddate = $(this).attr('data-selecteddate');
-    getAnnualLeave(empID);      
+    $('.al').each(function(){
+
+        //var empID = $("#annualleavesummary").attr('data-id');
+        //var patternparentID = $("#annualleavesummary").attr('data-patternparentid');
+
+        var empID = $(this).data('id');
+        var patternparentID = $(this).data('patternparentid');
+
+        //var selecteddate = $(this).attr('data-selecteddate');
+        getAnnualLeave(empID, patternparentID); 
+
+    });    
 
 }); 
 
@@ -89,16 +98,16 @@ function newPattern(employeeID, selectedstartdate, selectedenddate){
     });
 }
     
-function getAnnualLeave(employeeID){
+function getAnnualLeave(employeeID, patternparentID){
     //calculate annual leave for passed employee_id
     $.ajax({
-        url: 'http://carenta.somervillehouse.co.uk/events/annualleave?employee_id=' + employeeID,
+        url: 'http://carenta.somervillehouse.co.uk/events/annualleave?employee_id=' + employeeID + '& patternparentid=' + patternparentID,
         type: 'POST', // Send post data
         success: function(data){
             console.log(data);
             //location.reload();
             //alert(data);
-            $('#annualleavesummary').html(data);
+            $('#annualleavesummary' + patternparentID).html(data);
         }
     });
 }

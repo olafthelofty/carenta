@@ -75,10 +75,14 @@ class PatternsController extends AppController
         $patternparentid = $this->request->query('pattern_parent_id');
         
         // check if date picker date has been selected
-        if($selectedstartdate){
+        if($selectedstartdate && $selectedenddate){
             $startDate = \DateTime::createFromFormat('Y-m-d', $selectedstartdate);
             $startDate->format('Y-m-d');          
             $startDate->modify('-1 day');
+
+            $endDate = \DateTime::createFromFormat('Y-m-d', $selectedenddate);
+            $endDate->format('Y-m-d');          
+            $endDate->modify('-1 day');            
             
         }else{
 
@@ -115,6 +119,9 @@ class PatternsController extends AppController
             //default resource id for pattern template
             $pattern->resource_id = 33;
             $pattern->start_date =  $startDate->modify('+1 day');
+
+            $pattern->end_date =  $endDate->modify('+1 day');
+
             //$pattern->start_date =  $startDate;
             $pattern->event_type = 'pattern';
             $pattern->pattern_parent_id = $patternparentid;

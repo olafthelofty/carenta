@@ -112,7 +112,7 @@ $(document).ready(function(){
                 var y = (event.resourcesParent? event.resourcesTitle + '&nbsp;' : '');                
                 
                 element.qtip({
-                    content: x + event.title
+                    content: x + event.patternparentid
                 });
 
                 var new_description = 

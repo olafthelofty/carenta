@@ -163,15 +163,6 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                         );
                         
                     ?>
-
-                        <div class="btn btn-danger btn-sm pull-right">
-                        Annual Leave Entitlement (days) 
-                        <span 
-                            class="badge" 
-                            id="annualleavesummary" 
-                            data-id=<?php echo $employee->id; ?>>
-                        </span>
-                    </div>
                         
                 </div>
                 <div class="panel-body">
@@ -278,20 +269,7 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
 
                                     <td class="actions myActions">
                                         
-                                        <?= 
-                                            $this->Html->link('', [
-                                                'controller' => 'Patterns', 
-                                                'action' => 'addWeekTemplate', 
-                                                    'employee_id' => $patternParents->employee_id, 
-                                                    'selectedstartdate' => date('Y-m-d',strtotime($patternParents->parent_start)), 
-                                                    'selectedenddate' => date('Y-m-d',strtotime($patternParents->parent_end)),
-                                                    'pattern_parent_id' => $patternParents->id
-                                                ], 
-                                                [
-                                                    'title' => __('Create'), 'class' => 'iconcolor2 btn-space fa fa-plus-square fa-lg'
-                                                ]
-                                            ) 
-                                        ?>
+
                                         
                                         <?= $this->Html->link('', [
                                             'controller' => 'PatternParents', 
@@ -310,27 +288,42 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                                 
                                             if (!empty($employee->patterns)){$btnState = 'active';} else {$btnState = 'disabled';}
 
-                                            echo $this->Html->link('',
-                                                array(
-                                                    'controller' => 'Events', 
-                                                    'action' => 'patternevent', 
-                                                    'employee_id' => $employee->id, 
-                                                    'patternparentid' => $patternParents->id,
-                                                    'patternSun' => $patternParents->patterns[0]->id,
-                                                    'patternMon' => $patternParents->patterns[1]->id,
-                                                    'patternTue' => $patternParents->patterns[2]->id,
-                                                    'patternWed' => $patternParents->patterns[3]->id,
-                                                    'patternThu' => $patternParents->patterns[4]->id,
-                                                    'patternFri' => $patternParents->patterns[5]->id,
-                                                    'patternSat' => $patternParents->patterns[6]->id                                                    
-                                                ),
-                                                array(
-                                                    'class' => 'iconcolor3 btn-space4x fa fa-check fa-lg', 
-                                                    'title' => 'Apply',
-                                                    'id' => 'patternevent',
-                                                    'data-id'=> $employee->id
-                                                )
-                                            ); 
+                                            if ($patternParents->patterns){
+                                                echo $this->Html->link('',
+                                                    array(
+                                                        'controller' => 'Events', 
+                                                        'action' => 'patternevent', 
+                                                        'employee_id' => $employee->id, 
+                                                        'patternparentid' => $patternParents->id,
+                                                        'patternSun' => $patternParents->patterns[0]->id,
+                                                        'patternMon' => $patternParents->patterns[1]->id,
+                                                        'patternTue' => $patternParents->patterns[2]->id,
+                                                        'patternWed' => $patternParents->patterns[3]->id,
+                                                        'patternThu' => $patternParents->patterns[4]->id,
+                                                        'patternFri' => $patternParents->patterns[5]->id,
+                                                        'patternSat' => $patternParents->patterns[6]->id                                                    
+                                                    ),
+                                                    array(
+                                                        'class' => 'iconcolor3 btn-space4x fa fa-check fa-lg', 
+                                                        'title' => 'Apply',
+                                                        'id' => 'patternevent',
+                                                        'data-id'=> $employee->id
+                                                    )
+                                                ); 
+                                            } else {
+                                                echo $this->Html->link('', [
+                                                    'controller' => 'Patterns', 
+                                                    'action' => 'addWeekTemplate', 
+                                                        'employee_id' => $patternParents->employee_id, 
+                                                        'selectedstartdate' => date('Y-m-d',strtotime($patternParents->parent_start)), 
+                                                        'selectedenddate' => date('Y-m-d',strtotime($patternParents->parent_end)),
+                                                        'pattern_parent_id' => $patternParents->id
+                                                    ], 
+                                                    [
+                                                        'title' => __('Create'), 'class' => 'iconcolor2 btn-space4x fa fa-plus-square fa-lg'
+                                                    ]
+                                                );
+                                            }
 
                                             if (!empty($employee->pattern_parents)){
 
@@ -347,6 +340,18 @@ $this->extend('../Layout/TwitterBootstrap/dashboard');
                                                                                     
                                             }
                                         ?> 
+
+                    <div class="btn btn-danger btn-sm pull-right">
+                        Annual Leave Entitlement (days) 
+                        <span 
+                            class="badge al" 
+                            id="annualleavesummary<?php echo $patternParents->id; ?>"
+                            data-id=<?php echo $employee->id; ?>
+                            data-patternparentid=<?php echo $patternParents->id; ?>>
+                        </span>
+                    </div>
+
+
 
                                     </td>               
                                 </tr>
